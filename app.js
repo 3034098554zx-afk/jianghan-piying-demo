@@ -120,7 +120,7 @@
       ['play/characters','type','动态汉字'], ['play','curtain','互动戏台']
     ];
     const slides = homePosters.map(({id,label,image,title}) =>
-      '<div class="poster-slide" data-poster="'+id+'"'+(id===activePoster?' data-current':'')+'><button type="button" class="poster-sheet" data-reel-play="'+id+'" aria-label="'+posterLabel(id,label)+'"><img src="'+asset(image+'.webp')+'" alt="'+title+'" width="1055" height="1491" loading="lazy" decoding="async"></button></div>'
+      '<div class="poster-slide" data-poster="'+id+'"'+(id===activePoster?' data-current':'')+'><button type="button" class="poster-sheet" data-reel-play="'+id+'" aria-label="'+posterLabel(id,label)+'"><img src="'+asset(image+'-preview.webp')+'" alt="'+title+'" width="1055" height="1491" loading="lazy" decoding="async" fetchpriority="low"></button></div>'
     ).join('');
     return '<div class="home-opening"><section class="home-hero" aria-labelledby="home-title"><div class="home-intro">'+
       '<h1 id="home-title">让光影，<br>被重新看见</h1><span class="hero-rule" aria-hidden="true"></span>'+
@@ -227,7 +227,7 @@
     video.controls = true;
     video.playsInline = true;
     video.preload = 'metadata';
-    video.poster = asset(item.image+'.webp');
+    video.poster = asset(item.image+'-preview.webp');
     video.setAttribute('aria-label',item.label+'字动态海报');
     video.addEventListener('play',()=>personal.track('stage/watch/'+item.film),{once:true});
     video.addEventListener('play',updatePosterAction);
@@ -694,7 +694,7 @@
       if (config.camera) frame.allow = "camera 'self'; autoplay 'self'; fullscreen 'self'";
       frame.className = 'experience';
       const frameUrl=new URL('experience/'+config.url,location.href);
-      frameUrl.searchParams.set("v","bb73544771");
+      frameUrl.searchParams.set("v","bd86a8c685");
       frame.src=frameUrl.href;
       if (keepStage) {
         stageFrame = frame;

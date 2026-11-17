@@ -116,6 +116,12 @@ img {max-width: 100%}
 .bag-count {position: absolute; top: 2px; right: 0; min-width: 16px; height: 16px; padding: 0 3px; border-radius: 9px; background: var(--red); color: #fff7e9; font: 10px/16px var(--sans)}
 
 .home-opening {padding-bottom: clamp(13px,3svh,26px)}
+.startup-message {min-height: min(62svh,420px); display: grid; align-content: center; justify-items: center; gap: 10px; padding: 18px; text-align: center; color: var(--muted)}
+.startup-message strong {color: var(--red); font: 650 29px/1.3 var(--serif)}
+.startup-message p {margin: 0}
+.startup-retry {visibility: hidden; animation: startup-retry-visible 0s 7s forwards}
+@keyframes startup-retry-visible {to {visibility: visible}}
+
 .home-hero {position: relative; isolation: isolate; min-height: calc(clamp(293px,44svh,396px) + var(--safe-top))}
 .home-hero::before {
   content: ""; position: absolute; z-index: -2; inset: 0 0 -18px;
