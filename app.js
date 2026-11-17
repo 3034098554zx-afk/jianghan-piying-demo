@@ -76,6 +76,7 @@
     return {id,label,image,title,film:'film-'+id};
   });
   let activePoster = homePosters[0].id, homeVideo, finishedPoster;
+  let homeMediaObserver;
   const posterPosition = () => (homePosters.findIndex(poster=>poster.id===activePoster)+1)+' / '+homePosters.length;
   const posterLabel = (id,label) => id===activePoster?'播放'+label+'字动态海报':'查看'+label+'字海报';
   const photoGroups = [['all','全部'],['figure','人物造型'],['group','同台与组合']];
@@ -120,7 +121,7 @@
       ['play/characters','type','动态汉字'], ['play','curtain','互动戏台']
     ];
     const slides = homePosters.map(({id,label,image,title}) =>
-      '<div class="poster-slide" data-poster="'+id+'"'+(id===activePoster?' data-current':'')+'><button type="button" class="poster-sheet" data-reel-play="'+id+'" aria-label="'+posterLabel(id,label)+'"><img src="'+asset(image+'-preview.webp')+'" alt="'+title+'" width="1055" height="1491" loading="lazy" decoding="async" fetchpriority="low"></button></div>'
+      '<div class="poster-slide" data-poster="'+id+'"'+(id===activePoster?' data-current':'')+'><button type="button" class="poster-sheet" data-reel-play="'+id+'" aria-label="'+posterLabel(id,label)+'"><img data-home-src="'+asset(image+'-preview.webp')+'" alt="'+title+'" width="1055" height="1491" decoding="async" fetchpriority="low"></button></div>'
     ).join('');
     return '<div class="home-opening"><section class="home-hero" aria-labelledby="home-title"><div class="home-intro">'+
       '<h1 id="home-title">让光影，<br>被重新看见</h1><span class="hero-rule" aria-hidden="true"></span>'+
@@ -136,7 +137,7 @@
       '</div><div class="reel-actions"><button type="button" class="reel-play" data-poster-play>'+icon(finishedPoster===activePoster?'history':'play')+'<span>'+(finishedPoster===activePoster?'重播动态':'播放动态')+'</span></button>'+
       personal.favoriteButton('stage/poster/poster-'+activePoster,true)+'</div></div></section>'+
       '<section class="home-explore section"><div class="section-heading rule-heading"><h2>探索江汉</h2>'+
-      goButton('explore','文化溯源 '+icon('next'),'text-button')+'</div>'+photoCover()+'</section>';
+      goButton('explore','文化溯源 '+icon('next'),'text-button')+'</div>'+photoCover(true)+'</section>';
   }
 
   function updatePosterAction() {
@@ -187,6 +188,29 @@
     track.dataset.snapTarget = moving&&Math.abs(track.scrollLeft-left)>2 ? id : '';
     setActivePoster(id);
     track.scrollTo({left,behavior:moving?'smooth':'instant'});
+  }
+
+  function connectHomeImages() {
+    const images=[...content.querySelectorAll('[data-home-src]')];
+    const start=image=>{
+      image.src=image.dataset.homeSrc;
+      delete image.dataset.homeSrc;
+    };
+    if (!('IntersectionObserver' in window)) {
+      for (const image of images) {
+        image.loading='lazy';
+        start(image);
+      }
+      return;
+    }
+    homeMediaObserver=new IntersectionObserver((entries,observer)=>{
+      for (const entry of entries) {
+        if (entry.intersectionRatio<.22) continue;
+        observer.unobserve(entry.target);
+        start(entry.target);
+      }
+    },{root:view,rootMargin:'0px 0px 80px',threshold:.22});
+    for (const image of images) homeMediaObserver.observe(image);
   }
 
   function connectPosterTrack() {
@@ -262,9 +286,9 @@
       '<span class="explore-card-copy"><span><strong>'+title+'</strong><small>'+copy+'</small></span><span class="explore-arrow">'+icon('next')+'</span></span>','explore-card');
   }
 
-  function photoCover() {
+  function photoCover(defer=false) {
     return goButton('explore/photos','<span class="photo-cover-copy"><strong>影偶实拍</strong><small>'+data.photos.length+' 幅 · 人物造型与同台</small></span>'+
-      '<img src="'+photoThumb('three-poses')+'" alt="" loading="lazy" decoding="async"><span class="explore-arrow">'+icon('next')+'</span>','photo-cover');
+      '<img '+(defer?'data-home-src':'src')+'="'+photoThumb('three-poses')+'" alt="" loading="lazy" decoding="async"><span class="explore-arrow">'+icon('next')+'</span>','photo-cover');
   }
 
   function explore() {
@@ -694,7 +718,7 @@
       if (config.camera) frame.allow = "camera 'self'; autoplay 'self'; fullscreen 'self'";
       frame.className = 'experience';
       const frameUrl=new URL('experience/'+config.url,location.href);
-      frameUrl.searchParams.set("v","bd86a8c685");
+      frameUrl.searchParams.set("v","40887f8c8f");
       frame.src=frameUrl.href;
       if (keepStage) {
         stageFrame = frame;
@@ -723,6 +747,8 @@
     personal.track(next);
     frame = null;
     clearTimeout(frameTimer);
+    homeMediaObserver?.disconnect();
+    homeMediaObserver=null;
     stopHomeVideo();
     if (next!=='play') showStage(false);
     content.replaceChildren();
@@ -766,7 +792,10 @@
     else if (tab==='shop') content.innerHTML=product(id,variant);
     else if (sub==='watch') content.innerHTML=watch(id);
     else if (sub==='poster') content.innerHTML=poster(id);
-    if (next==='stage') connectPosterTrack();
+    if (next==='stage') {
+      connectPosterTrack();
+      connectHomeImages();
+    }
     view.scrollTop = restore?(scrollPositions.get(next)||0):0;
     animatePage(previous,next);
   }
