@@ -33,6 +33,18 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Jianghan Shop";
+  src: url("assets/jianghan-shop.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+}
+
+.app.is-shop {
+  --serif: "Jianghan Shop", "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+}
+
 .app.is-home, .startup-message {
   --serif: "Jianghan Opening", "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
 }

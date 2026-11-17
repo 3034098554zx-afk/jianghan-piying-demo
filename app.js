@@ -76,7 +76,7 @@
     return {id,label,image,title,film:'film-'+id};
   });
   let activePoster = homePosters[0].id, homeVideo, finishedPoster;
-  let homeMediaObserver;
+  let homeMediaObserver, productMediaObserver;
   const posterPosition = () => (homePosters.findIndex(poster=>poster.id===activePoster)+1)+' / '+homePosters.length;
   const posterLabel = (id,label) => id===activePoster?'播放'+label+'字动态海报':'查看'+label+'字海报';
   const photoGroups = [['all','全部'],['figure','人物造型'],['group','同台与组合']];
@@ -473,7 +473,9 @@
     if(tab==='shop'&&sub==='item'&&itemFor(id)&&variant!==undefined){
       const item=itemFor(id);
       if (variantFor(item,variant)!==variant) return null;
-      return {key:'shop/item/'+id,title:item.name,note:item.set?'文创 · 三字一套':'文创 · '+glyphs[variant].label+'字款',image:productImage(item,variant)};
+      const file='product-'+item.id+'-'+variant+'.webp';
+      return {key:'shop/item/'+id,title:item.name,note:item.set?'文创 · 三字一套':'文创 · '+glyphs[variant].label+'字款',
+        image:asset(data.productImages?.[file]?.card||file)};
     }
     if(tab==='play'&&sub==='solo'&&glyphs[id]&&variant===undefined)
       return {key:path,title:'「'+glyphs[id].label+'」字戏台',note:'互动戏台',image:asset(id+'.webp')};
@@ -525,15 +527,68 @@
       '<button type="button" data-category="'+id+'" aria-pressed="'+(id===category)+'">'+label+'</button>').join('')+'</div>';
   }
 
+  function productPicture(file,label='',size='card') {
+    const media=data.productImages?.[file], original=asset(file);
+    if (!media) return '<img src="'+original+'" alt="'+label+'" decoding="async" loading="lazy">';
+    return '<img src="'+media.preview+'" data-product-src="'+asset(media[size])+
+      '" data-product-original="'+original+'" alt="'+label+'" decoding="async">';
+  }
+
+  async function loadProductPicture(image) {
+    const target=image.dataset.productSrc;
+    if (!target||image.getAttribute('src')===target) return true;
+    const decoded=new Image();
+    decoded.decoding='async';
+    decoded.src=target;
+    try {
+      await decoded.decode();
+      if (!image.isConnected||image.dataset.productSrc!==target) return false;
+      image.src=target;
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  function connectProductImages() {
+    productMediaObserver?.disconnect();
+    const images=[...content.querySelectorAll('[data-product-src]')];
+    if (!('IntersectionObserver' in window)) {
+      for (const image of images) loadProductPicture(image);
+      return;
+    }
+    productMediaObserver=new IntersectionObserver((entries,observer)=>{
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        observer.unobserve(entry.target);
+        loadProductPicture(entry.target);
+      }
+    },{root:view,rootMargin:'0px 0px 70px',threshold:.01});
+    for (const image of images) productMediaObserver.observe(image);
+  }
+
+  async function loadProductOriginal() {
+    const image=$('#media-content img');
+    if (!image?.dataset.productOriginal) return;
+    const status=$('#product-media-status'), retry=$('#product-media-retry');
+    status.textContent='正在加载清晰大图';
+    retry.hidden=true;
+    image.dataset.productSrc=image.dataset.productOriginal;
+    const loaded=await loadProductPicture(image);
+    if (!image.isConnected) return;
+    status.textContent=loaded?'':'清晰大图暂未加载';
+    retry.hidden=loaded;
+  }
+
   function shop() {
     const shown = data.products.filter(item=>category==='all'||item.cat===category);
     return heading('江汉文创','把一幕戏，带回日常。')+
       (['all','gift'].includes(category)?goButton('shop/item/magnet/pi',
-        '<img src="'+productImage(itemFor('magnet'),'pi')+'" alt=""><div><span>可动磁贴礼盒</span><h2>字动成戏</h2><span class="store-more">看三款礼盒 '+icon('arrow')+'</span></div>','shop-feature'):'')+
+        productPicture('product-magnet-pi.webp','','screen')+'<div><span>可动磁贴礼盒</span><h2>字动成戏</h2><span class="store-more">看三款礼盒 '+icon('arrow')+'</span></div>','shop-feature'):'')+
       categoryNames()+'<div class="product-grid">'+shown.map(item=>
         goButton('shop/item/'+item.id+'/'+variantFor(item,'pi'),
-          '<span class="product-photo '+(item.cover?'is-cover':item.cat==='gift'?'is-photo':'')+'"><img src="'+
-          (item.cover?asset(item.cover):productImage(item,'pi'))+'" alt="" loading="lazy"></span>'+
+          '<span class="product-photo '+(item.cover?'is-cover':item.cat==='gift'?'is-photo':'')+'">'+
+          productPicture(item.cover||'product-'+item.id+'-'+variantFor(item,'pi')+'.webp')+'</span>'+
           '<span class="product-card-text"><strong>'+item.name+'</strong><small>'+(item.set?'三字一套':'皮 / 影 / 戏')+'</small>'+icon('next')+'</span>','product-card')
       ).join('')+'</div>';
   }
@@ -544,14 +599,14 @@
     const show3D = item.models?.includes(picked);
     const firstPhoto = item.detailPhotos?.[0];
     const label = firstPhoto?firstPhoto[1]:item.set?'皮影戏三字一套':'「'+glyphs[picked].label+'」字款';
-    const photo = firstPhoto?asset(firstPhoto[2]):productImage(item,picked);
+    const photo = firstPhoto?firstPhoto[2]:'product-'+item.id+'-'+picked+'.webp';
     const variants = firstPhoto
       ? '<div class="variant-tabs product-photo-tabs" aria-label="选择书签图样">'+item.detailPhotos.map(([id,label],index)=>
           '<button type="button" data-product-shot="'+id+'" aria-pressed="'+(index===0)+'">'+label+'</button>').join('')+'</div>'
       : item.set?'':'<div class="variant-tabs" aria-label="选择款式">'+data.glyphs.map(g=>
           '<button type="button" data-replace="shop/item/'+id+'/'+g.id+'" aria-pressed="'+(g.id===picked)+'">'+g.label+'字</button>').join('')+'</div>';
     return '<section class="product-page" data-product="'+id+'">'+
-      '<button class="product-hero '+(firstPhoto?'is-bookmark':item.cat==='gift'?'is-photo':'')+'" type="button" data-enlarge aria-label="放大'+item.name+'图片"><img src="'+photo+'" alt="'+item.name+' '+label+'"><span>查看大图 ↗</span></button>'+
+      '<button class="product-hero '+(firstPhoto?'is-bookmark':item.cat==='gift'?'is-photo':'')+'" type="button" data-enlarge aria-label="放大'+item.name+'图片">'+productPicture(photo,item.name+' '+label,'screen')+'<span>查看大图 ↗</span></button>'+
       '<div class="product-detail"><div class="product-title-row"><div><span class="muted" data-product-label>'+label+'</span><h1>'+item.name+'</h1></div><span class="preview-tag">设计展示</span></div>'+
       '<p>'+item.note+'</p>'+variants+
       (show3D?row('shop/object/'+picked,'box','360° 立体赏物','可旋转、缩放，牵动圆孔关节'):'')+
@@ -565,8 +620,8 @@
     const shot=item?.detailPhotos?.find(([id])=>id===button.dataset.productShot);
     if (!shot) return;
     const [id,label,file]=shot, image=page.querySelector('.product-hero img');
-    image.src=asset(file);
-    image.alt=item.name+' '+label;
+    image.outerHTML=productPicture(file,item.name+' '+label,'screen');
+    connectProductImages();
     page.querySelector('[data-product-label]').textContent=label;
     page.querySelectorAll('[data-product-shot]').forEach(option=>
       option.setAttribute('aria-pressed',String(option.dataset.productShot===id)));
@@ -579,7 +634,7 @@
     });
     return heading('购物袋',items.length?'已收好 '+checkoutCount()+' 件文创。':'你还没有加入文创。')+
       (items.length?'<div class="bag-items">'+items.map(({item,variant,key,quantity})=>
-        '<div class="bag-item">'+goButton('shop/item/'+key,'<img src="'+productImage(item,variant)+'" alt="">','bag-image')+
+        '<div class="bag-item">'+goButton('shop/item/'+key,productPicture('product-'+item.id+'-'+variant+'.webp'),'bag-image')+
         '<div class="bag-copy"><h2>'+item.name+'</h2><p>'+(item.set?'三字一套':glyphs[variant].label+'字款')+'</p>'+
         '<div class="bag-quantity"><button type="button" data-quantity="'+key+'" data-delta="-1" aria-label="减少'+item.name+'数量">−</button><output>'+quantity+'</output><button type="button" data-quantity="'+key+'" data-delta="1" aria-label="增加'+item.name+'数量">＋</button></div></div>'+
         '<button type="button" data-remove="'+key+'" class="bag-remove" aria-label="移除'+item.name+'">移除</button></div>'
@@ -718,7 +773,7 @@
       if (config.camera) frame.allow = "camera 'self'; autoplay 'self'; fullscreen 'self'";
       frame.className = 'experience';
       const frameUrl=new URL('experience/'+config.url,location.href);
-      frameUrl.searchParams.set("v","40887f8c8f");
+      frameUrl.searchParams.set("v","a54e378c9c");
       frame.src=frameUrl.href;
       if (keepStage) {
         stageFrame = frame;
@@ -749,6 +804,8 @@
     clearTimeout(frameTimer);
     homeMediaObserver?.disconnect();
     homeMediaObserver=null;
+    productMediaObserver?.disconnect();
+    productMediaObserver=null;
     stopHomeVideo();
     if (next!=='play') showStage(false);
     content.replaceChildren();
@@ -757,6 +814,7 @@
     const deep = tabIndex<0, embedded = frameFor(next);
     app.classList.toggle('is-home',next==='stage');
     app.classList.toggle('is-explore',tab==='explore');
+    app.classList.toggle('is-shop',tab==='shop');
     app.classList.toggle('is-account',tab==='case');
     app.classList.remove('home-scrolled');
     const craftPage=(tab==='make'&&sub!=='import')||Boolean(embedded?.stageRoom);
@@ -797,6 +855,7 @@
       connectHomeImages();
     }
     view.scrollTop = restore?(scrollPositions.get(next)||0):0;
+    if (tab==='shop') connectProductImages();
     animatePage(previous,next);
   }
 
@@ -894,6 +953,7 @@
       content.innerHTML = shop();
       view.scrollTop = y;
       view.querySelector('[data-category="'+category+'"]')?.focus({preventScroll:true});
+      connectProductImages();
     } else if (d.productShot) selectProductShot(button);
     else if (d.add) {
       updateBasket(d.add,1);
@@ -904,14 +964,17 @@
     else if (d.photo) openPhoto(d.photo);
     else if (d.photoStep && photoView) showPhoto(Number(d.photoStep));
     else if (button.hasAttribute('data-media-zoom')) zoomMedia(button.getAttribute('aria-pressed')!=='true');
+    else if (button.id==='product-media-retry') loadProductOriginal();
     else if (button.hasAttribute('data-enlarge')) {
       const image=button.querySelector('img').cloneNode();
       image.draggable=false;
       $('#media-title').textContent=image.alt;
       $('#media-content').innerHTML='<div class="media-viewport" aria-label="商品图片"></div>'+
-        '<div class="product-image-tools">'+mediaZoomButton+'</div>';
+        '<div class="product-image-tools"><span id="product-media-status" role="status"></span>'+
+        '<button type="button" class="outline-button" id="product-media-retry" hidden>重新加载大图</button>'+mediaZoomButton+'</div>';
       $('#media-content .media-viewport').append(image);
       $('#media-dialog').showModal();
+      loadProductOriginal();
     } else if (button.id==='close-media') $('#media-dialog').close();
     else if (button.id==='reload-frame') {
       if (route==='play') { stageFrame?.remove(); stageFrame = null; }

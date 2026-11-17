@@ -220,7 +220,7 @@
 .app .photo-pages {gap: 6px; flex-wrap: wrap; margin: 6px 0 0}
 .app .media-zoom {min-height: 44px; padding-inline: 9px; font-size: 12px}
 .media-zoom svg {width: 14px; height: 14px}
-.product-image-tools {display: flex; justify-content: center; padding-top: 9px}
+.product-image-tools {display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px; padding-top: 9px}
 
 .craft-steps .passed::after {
   width: 12px;
