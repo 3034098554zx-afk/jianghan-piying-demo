@@ -170,6 +170,27 @@
     recordingAt=Date.now();made.start(180);playSound();timer=setTimeout(()=>{if(made.state==='recording')made.stop();},25000);refresh();
    } catch {recorder=null;cancelAnimationFrame(painting);stream?.getVideoTracks().forEach(t=>t.stop());status('录制暂时不可用，仍可预览演出。');}
   }
+  let roleRequest=0;
+  async function selectRole(button,value) {
+   const currentRequest=++roleRequest;
+   const name=button.textContent;
+   button.disabled=true;
+   button.textContent='正在加载'+name+'…';
+   try {
+    await engine.prepareStageActor(value);
+    if(currentRequest!==roleRequest||!overlay.isConnected||!visible)return;
+    engine.stageAction('actor',value);
+    send('cast',{glyph:value==='mine'?engine.describe().glyph:value});
+    if(activePanel==='roles')menu();
+    refresh();
+   } catch {
+    if(currentRequest===roleRequest&&overlay.isConnected)status('角色加载失败，点选角色可重试。');
+   } finally {
+    button.disabled=false;
+    button.textContent=name;
+   }
+  }
+
   function click(e) {
    const b=e.target.closest('[data-room]');if(!b)return;
    const {room:id,value}=b.dataset;
@@ -202,9 +223,9 @@
      else status('图片暂时无法生成，请重试。');
     });
     else send('stage-link',{target:value});
-   } else {
+   } else if(id==='actor')selectRole(b,value);
+   else {
     engine.stageAction(id,value);
-    if(id==='actor')send('cast',{glyph:value==='mine'?engine.describe().glyph:value});
     if(activePanel)menu();
    }
    refresh();

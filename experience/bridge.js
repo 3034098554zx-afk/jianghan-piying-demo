@@ -15,9 +15,10 @@
   function ready() {
     if (!notified) { notified = true; send('ready'); }
   }
-  function waitFor(predicate, action, until = performance.now()+20000) {
+  function waitFor(predicate, action, until = performance.now()+50000) {
     if (predicate()) action();
-    else if (performance.now()<until) setTimeout(()=>waitFor(predicate,action,until),120);
+    else if (performance.now()<until&&!root.dataset.frameFailed) setTimeout(()=>waitFor(predicate,action,until),120);
+    else send('load-error');
   }
   function button(id,text,action) {
     const node=document.createElement('button');

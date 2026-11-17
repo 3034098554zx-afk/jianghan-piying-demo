@@ -120,7 +120,7 @@
       ['play/characters','type','动态汉字'], ['play','curtain','互动戏台']
     ];
     const slides = homePosters.map(({id,label,image,title}) =>
-      '<div class="poster-slide" data-poster="'+id+'"'+(id===activePoster?' data-current':'')+'><button type="button" class="poster-sheet" data-reel-play="'+id+'" aria-label="'+posterLabel(id,label)+'"><img src="'+asset(image+'.webp')+'" alt="'+title+'" width="1055" height="1491" decoding="async"></button></div>'
+      '<div class="poster-slide" data-poster="'+id+'"'+(id===activePoster?' data-current':'')+'><button type="button" class="poster-sheet" data-reel-play="'+id+'" aria-label="'+posterLabel(id,label)+'"><img src="'+asset(image+'.webp')+'" alt="'+title+'" width="1055" height="1491" loading="lazy" decoding="async"></button></div>'
     ).join('');
     return '<div class="home-opening"><section class="home-hero" aria-labelledby="home-title"><div class="home-intro">'+
       '<h1 id="home-title">让光影，<br>被重新看见</h1><span class="hero-rule" aria-hidden="true"></span>'+
@@ -325,8 +325,19 @@
     zoomMedia(false);
     $('#media-title').textContent = photo.title;
     picture.alt = photo.title;
-    picture.src = reduceInterface()&&photo.image.endsWith('.gif')?photoThumb(photo.id):asset(photo.image);
-    $('#photo-caption').textContent = photo.caption;
+    picture.dataset.photoId = photo.id;
+    picture.src = photoThumb(photo.id);
+    const caption = $('#photo-caption');
+    caption.textContent = photo.caption;
+    if (!(reduceInterface()&&photo.image.endsWith('.gif'))) {
+      const fullSize = new Image();
+      fullSize.src = asset(photo.image);
+      fullSize.decode().then(()=>{
+        if (picture.isConnected&&picture.dataset.photoId===photo.id) picture.src = fullSize.src;
+      }).catch(()=>{
+        if (picture.isConnected&&picture.dataset.photoId===photo.id) caption.textContent = photo.caption+' · 当前为预览图';
+      });
+    }
     $('#photo-position').value = (photoView.index+1)+' / '+items.length;
   }
 
@@ -648,6 +659,11 @@
     if (visible) sendFrameSettings(stageFrame);
   }
 
+  function showFrameRetry(message) {
+    const loading = $('#frame-loading');
+    if (loading) loading.innerHTML = '<p>'+message+'</p><button type="button" class="outline-button" id="reload-frame">重新打开</button>';
+  }
+
   function mountFrame(config, keepStage) {
     if (keepStage&&stageFrame) {
       frame = stageFrame;
@@ -657,18 +673,17 @@
       frame.title = config.title;
       if (config.camera) frame.allow = "camera 'self'; autoplay 'self'; fullscreen 'self'";
       frame.className = 'experience';
-      frame.src = 'experience/'+config.url;
+      const frameUrl=new URL('experience/'+config.url,location.href);
+      frameUrl.searchParams.set("v","df8734dcf6");
+      frame.src=frameUrl.href;
       if (keepStage) {
         stageFrame = frame;
         view.prepend(frame);
       } else content.prepend(frame);
     }
     if (frame.classList.contains('ready')) return;
-    content.insertAdjacentHTML('beforeend','<div id="frame-loading" class="frame-loading"><span>'+icon('mark')+'</span><p>正在展开灯幕</p></div>');
-    frameTimer = setTimeout(()=>{
-      const loading = $('#frame-loading');
-      if (loading) loading.innerHTML = '<p>加载时间有点久</p><button type="button" class="outline-button" id="reload-frame">重新打开</button>';
-    }, 14000);
+    content.insertAdjacentHTML('beforeend','<div id="frame-loading" class="frame-loading" role="status"><span>'+icon('mark')+'</span><p>正在展开灯幕</p></div>');
+    frameTimer = setTimeout(()=>showFrameRetry('网络较慢，仍在加载'),14000);
   }
 
   function animatePage(previous,next) {
@@ -922,7 +937,10 @@
       return;
     }
     if (!current) return;
-    if (message.type==='back') back();
+    if (message.type==='load-error') {
+      clearTimeout(frameTimer);
+      showFrameRetry('页面暂未加载完成，请重试');
+    } else if (message.type==='back') back();
     else if (message.type==='craft-exit'&&route.startsWith('make/')) back();
     else if (message.type==='craft-choose'&&route.startsWith('make/work/')) {
       go('make/choose',{replace:true,pick:route.split('/')[2]});
