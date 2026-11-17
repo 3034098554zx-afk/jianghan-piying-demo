@@ -59,13 +59,15 @@ window.JianghanCatalog = {
       "id": "tote",
       "name": "字影手提布袋",
       "cat": "carry",
-      "note": "把暖光、操纵杆和海报字形一起印在袋身上，提着一幕江汉出门。"
+      "note": "把暖光、操纵杆和海报字形一起印在袋身上，提着一幕江汉出门。",
+      "cover": "product-tote-cover.webp"
     },
     {
       "id": "phone",
       "name": "皮影手机壳",
       "cat": "carry",
-      "note": "深色底上的红、蓝、黄保留了海报的色彩。三款各用一个原创字影。"
+      "note": "深色底上的红、蓝、黄保留了海报的色彩。三款各用一个原创字影。",
+      "cover": "product-phone-cover.webp"
     },
     {
       "id": "key",
@@ -78,25 +80,61 @@ window.JianghanCatalog = {
       "name": "荆楚非遗书签",
       "cat": "paper",
       "note": "精雕细镂、影舞江汉、一唱众和。三个字影做成一套书签。",
-      "set": true
+      "set": true,
+      "cover": "product-bookmark-cover.webp",
+      "detailPhotos": [
+        [
+          "red-pi",
+          "红款 · 皮",
+          "product-bookmark-red-pi.webp"
+        ],
+        [
+          "red-ying",
+          "红款 · 影",
+          "product-bookmark-red-ying.webp"
+        ],
+        [
+          "red-xi",
+          "红款 · 戏",
+          "product-bookmark-red-xi.webp"
+        ],
+        [
+          "yellow-pi",
+          "黄款 · 皮",
+          "product-bookmark-yellow-pi.webp"
+        ],
+        [
+          "yellow-ying",
+          "黄款 · 影",
+          "product-bookmark-yellow-ying.webp"
+        ],
+        [
+          "yellow-xi",
+          "黄款 · 戏",
+          "product-bookmark-yellow-xi.webp"
+        ]
+      ]
     },
     {
       "id": "stamp",
       "name": "江汉皮影邮票图样",
       "cat": "paper",
-      "note": "齿孔边框下收着三枚原创字影，画面中的面值属于图样设计。"
+      "note": "齿孔边框下收着三枚原创字影，画面中的面值属于图样设计。",
+      "cover": "product-stamp-cover.webp"
     },
     {
       "id": "sticker",
       "name": "字影圆形贴纸",
       "cat": "paper",
-      "note": "靛蓝圆环围住一枚字影，卷起的贴纸一角保留了质感。"
+      "note": "靛蓝圆环围住一枚字影，卷起的贴纸一角保留了质感。",
+      "cover": "product-sticker-cover.webp"
     },
     {
       "id": "cup",
       "name": "江汉皮影纸杯",
       "cat": "daily",
-      "note": "三幅字影海报延伸到杯身，从台前走到手中。"
+      "note": "三幅字影海报延伸到杯身，从台前走到手中。",
+      "cover": "product-cup-cover.webp"
     }
   ],
   "posters": [

@@ -508,7 +508,8 @@
         '<img src="'+productImage(itemFor('magnet'),'pi')+'" alt=""><div><span>可动磁贴礼盒</span><h2>字动成戏</h2><span class="store-more">看三款礼盒 '+icon('arrow')+'</span></div>','shop-feature'):'')+
       categoryNames()+'<div class="product-grid">'+shown.map(item=>
         goButton('shop/item/'+item.id+'/'+variantFor(item,'pi'),
-          '<span class="product-photo '+(item.cat==='gift'?'is-photo':'')+'"><img src="'+productImage(item,'pi')+'" alt="" loading="lazy"></span>'+
+          '<span class="product-photo '+(item.cover?'is-cover':item.cat==='gift'?'is-photo':'')+'"><img src="'+
+          (item.cover?asset(item.cover):productImage(item,'pi'))+'" alt="" loading="lazy"></span>'+
           '<span class="product-card-text"><strong>'+item.name+'</strong><small>'+(item.set?'三字一套':'皮 / 影 / 戏')+'</small>'+icon('next')+'</span>','product-card')
       ).join('')+'</div>';
   }
@@ -517,16 +518,34 @@
     const item = itemFor(id);
     const picked = variantFor(item, variant);
     const show3D = item.models?.includes(picked);
-    const label = item.set?'皮影戏三字一套':'「'+glyphs[picked].label+'」字款';
-    const photo = productImage(item, picked);
-    return '<section class="product-page">'+
-      '<button class="product-hero '+(item.cat==='gift'?'is-photo':'')+'" type="button" data-enlarge="'+item.id+'/'+picked+'" aria-label="放大'+item.name+'图片"><img src="'+photo+'" alt="'+item.name+' '+label+'"><span>查看大图 ↗</span></button>'+
-      '<div class="product-detail"><div class="product-title-row"><div><span class="muted">'+label+'</span><h1>'+item.name+'</h1></div><span class="preview-tag">设计展示</span></div>'+
-      '<p>'+item.note+'</p>'+
-      (!item.set?'<div class="variant-tabs" aria-label="选择款式">'+data.glyphs.map(g=>'<button type="button" data-replace="shop/item/'+id+'/'+g.id+'" aria-pressed="'+(g.id===picked)+'">'+g.label+'字</button>').join('')+'</div>':'')+
+    const firstPhoto = item.detailPhotos?.[0];
+    const label = firstPhoto?firstPhoto[1]:item.set?'皮影戏三字一套':'「'+glyphs[picked].label+'」字款';
+    const photo = firstPhoto?asset(firstPhoto[2]):productImage(item,picked);
+    const variants = firstPhoto
+      ? '<div class="variant-tabs product-photo-tabs" aria-label="选择书签图样">'+item.detailPhotos.map(([id,label],index)=>
+          '<button type="button" data-product-shot="'+id+'" aria-pressed="'+(index===0)+'">'+label+'</button>').join('')+'</div>'
+      : item.set?'':'<div class="variant-tabs" aria-label="选择款式">'+data.glyphs.map(g=>
+          '<button type="button" data-replace="shop/item/'+id+'/'+g.id+'" aria-pressed="'+(g.id===picked)+'">'+g.label+'字</button>').join('')+'</div>';
+    return '<section class="product-page" data-product="'+id+'">'+
+      '<button class="product-hero '+(firstPhoto?'is-bookmark':item.cat==='gift'?'is-photo':'')+'" type="button" data-enlarge aria-label="放大'+item.name+'图片"><img src="'+photo+'" alt="'+item.name+' '+label+'"><span>查看大图 ↗</span></button>'+
+      '<div class="product-detail"><div class="product-title-row"><div><span class="muted" data-product-label>'+label+'</span><h1>'+item.name+'</h1></div><span class="preview-tag">设计展示</span></div>'+
+      '<p>'+item.note+'</p>'+variants+
       (show3D?row('shop/object/'+picked,'box','360° 立体赏物','可旋转、缩放，牵动圆孔关节'):'')+
       '</div><div class="product-bar">'+personal.favoriteButton('shop/item/'+id+'/'+picked)+
       '<button type="button" class="primary-button" data-add="'+id+'/'+picked+'">'+icon('bag')+' 加入购物袋</button></div></section>';
+  }
+
+  function selectProductShot(button) {
+    const page=button.closest('.product-page');
+    const item=itemFor(page.dataset.product);
+    const shot=item?.detailPhotos?.find(([id])=>id===button.dataset.productShot);
+    if (!shot) return;
+    const [id,label,file]=shot, image=page.querySelector('.product-hero img');
+    image.src=asset(file);
+    image.alt=item.name+' '+label;
+    page.querySelector('[data-product-label]').textContent=label;
+    page.querySelectorAll('[data-product-shot]').forEach(option=>
+      option.setAttribute('aria-pressed',String(option.dataset.productShot===id)));
   }
 
   function basketView() {
@@ -584,12 +603,13 @@
   }
 
   function parentFor(next) {
-    const [tab,sub]=next.split('/');
+    const [tab,sub,id]=next.split('/');
     if (pages[next]?.parent) return pages[next].parent;
     if (!sub) return 'stage';
     if (tab==='stage') return 'stage/gallery';
     if (tab==='play'&&sub==='solo') return 'play/characters';
     if (tab==='play'&&sub==='work') return 'case/works';
+    if (tab==='shop'&&sub==='object') return 'shop/item/magnet/'+id;
     return tab;
   }
 
@@ -674,7 +694,7 @@
       if (config.camera) frame.allow = "camera 'self'; autoplay 'self'; fullscreen 'self'";
       frame.className = 'experience';
       const frameUrl=new URL('experience/'+config.url,location.href);
-      frameUrl.searchParams.set("v","df8734dcf6");
+      frameUrl.searchParams.set("v","bb73544771");
       frame.src=frameUrl.href;
       if (keepStage) {
         stageFrame = frame;
@@ -845,7 +865,8 @@
       content.innerHTML = shop();
       view.scrollTop = y;
       view.querySelector('[data-category="'+category+'"]')?.focus({preventScroll:true});
-    } else if (d.add) {
+    } else if (d.productShot) selectProductShot(button);
+    else if (d.add) {
       updateBasket(d.add,1);
       notify('已加入购物袋');
     } else if (d.quantity) updateBasket(d.quantity,Number(d.delta));
@@ -854,11 +875,13 @@
     else if (d.photo) openPhoto(d.photo);
     else if (d.photoStep && photoView) showPhoto(Number(d.photoStep));
     else if (button.hasAttribute('data-media-zoom')) zoomMedia(button.getAttribute('aria-pressed')!=='true');
-    else if (d.enlarge) {
-      const [id,variant] = d.enlarge.split('/');
-      $('#media-title').textContent = itemFor(id).name;
-      $('#media-content').innerHTML = '<div class="media-viewport" aria-label="商品图片"><img src="'+productImage(itemFor(id),variant)+'" alt="'+itemFor(id).name+'" draggable="false"></div>'+
+    else if (button.hasAttribute('data-enlarge')) {
+      const image=button.querySelector('img').cloneNode();
+      image.draggable=false;
+      $('#media-title').textContent=image.alt;
+      $('#media-content').innerHTML='<div class="media-viewport" aria-label="商品图片"></div>'+
         '<div class="product-image-tools">'+mediaZoomButton+'</div>';
+      $('#media-content .media-viewport').append(image);
       $('#media-dialog').showModal();
     } else if (button.id==='close-media') $('#media-dialog').close();
     else if (button.id==='reload-frame') {

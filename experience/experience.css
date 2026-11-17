@@ -237,6 +237,8 @@
 .mobile-object .object-header {display:none}
 .mobile-object .object-layout {height:100%;max-height:none;width:100%;padding:9px 11px;gap:0;display:block;overflow:auto}
 .mobile-object .object-stage {position:relative;top:auto;height:clamp(285px,54dvh,474px);min-height:0;max-height:none;border-radius:13px;overflow:hidden}
+.mobile-object .object-loading {gap: 9px}
+.mobile-object .object-loading img {display: block; width: min(48vw,190px); height: clamp(85px,23vh,180px); object-fit: contain; border-radius: 10px}
 .mobile-object .object-stage-kicker {font-size:9px}
 .mobile-object .object-gesture {font-size:10px;letter-spacing:0}
 .mobile-object .object-info {padding:13px 0 14px;max-width:none}

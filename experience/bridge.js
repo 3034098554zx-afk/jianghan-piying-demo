@@ -174,7 +174,7 @@
   function object() {
     const dialog=$('#object-dialog');
     dialog.addEventListener('close',()=>send('back'));
-    waitFor(()=>window.ShadowObjectViewer?.state.ready||!$('#object-fallback').hidden,ready);
+    waitFor(()=>dialog.open,ready);
   }
 
   if (root.classList.contains('mobile-stage')) frontStage();
