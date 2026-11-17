@@ -1,0 +1,89 @@
+三字同台 · 锣鼓新编｜音源、署名与改编说明
+
+本版使用持续伴奏和独立动作重音两条8.4秒立体声音轨。六段结构为：开场锣与急鼓、欢快登场、灵活对答、锣钹高潮、三字合演、密集收势。
+伴奏含172次经过编排的击奏，动作强调另含48次击奏；使用21个不同的原始采样。不是给旧合成音改名。
+原始资料
+QMUL-BeijingOperaPercussion / Beijing Opera Percussion Instrument Dataset
+提供者：ajaysm（Ajay Srinivasamurthy）
+录音：Mi Tian；演奏：Ying Wan。2013年9月，Centre for Digital Music, Queen Mary University of London。
+数据集作者：Mi Tian、Ajay Srinivasamurthy、Mark Sandler、Xavier Serra。
+https://zenodo.org/records/1285212
+https://freesound.org/people/ajaysm/packs/14056/
+参考论文：A Study of Instrument-wise Onset Detection in Beijing Opera Percussion Ensembles, ICASSP 2014. https://doi.org/10.1109/ICASSP.2014.6853981
+
+许可
+原始采样包内 _readme_and_license.txt 标明 Attribution / CC BY 3.0。
+https://creativecommons.org/licenses/by/3.0/
+本地归档同时保留 Zenodo API 元数据，其记录为 CC BY 4.0；本次对原始采样按包内 CC BY 3.0 保留署名、原始链接与改编说明。
+归档 MD5 已核验：51dc70d02a06b9d96befadf320a6996f。
+采样来自戏曲乐器独立击奏资料库；本音轨为这场动画新编，并非江汉皮影现场录音，也不表示原作者为本作品背书。
+
+处理与改编
+保留原始录音文件；在副本中截取起音、去除低频漂移、调整力度和尾音、设置声像与短反射，重新编排节奏并混音。
+主伴奏和动作强调分别渲染，播放时由同一音频时钟开始。暂停、续播和重播均保持两轨对齐；结尾在8.4秒前收至静音。
+网页已内嵌两轨WAV，不依赖联网音源。单独试听文件元数据中也保留了原始来源与许可。
+
+实际使用的原始采样
+222132__ajaysm__bangu-01.wav
+https://freesound.org/s/222132/
+SHA256 2faed98c27fcc2c7371a52b685a14665f1eafb308c623fa7ac61a6cebc83fadf
+222134__ajaysm__bangu-03.wav
+https://freesound.org/s/222134/
+SHA256 cf6f034c24421270a2a469947ec01dfafa59c9e0c6f3746686505dfb4537c7f6
+222135__ajaysm__bangu-04.wav
+https://freesound.org/s/222135/
+SHA256 fcdbba1fd329ad0f601b83e9e2ad21ffbbea5ccb1416fa28d0e5786be14c3be7
+205973__ajaysm__bangu-06.wav
+https://freesound.org/s/205973/
+SHA256 a7d0f30bdf2c6cd105a7657cac818f01138871348848f5d250d9cce09e704542
+222137__ajaysm__bangu-07.wav
+https://freesound.org/s/222137/
+SHA256 805469f0016419b4fb9b8a6d5d4b6b38d6d829d774b45c9c181236930f697712
+222138__ajaysm__bangu-08.wav
+https://freesound.org/s/222138/
+SHA256 ca3eb9223ccacdd7126b0a552b12325f3d81d71031734dbcd19500afd15d0588
+222147__ajaysm__bangu-17.wav
+https://freesound.org/s/222147/
+SHA256 a00166b79524beb8c0de23e424668929250239446f0a9ba8dd570d41761a0932
+222148__ajaysm__bangu-18.wav
+https://freesound.org/s/222148/
+SHA256 ef17d82abfefed374df7aa6b86810e63f9135f8435bc3920599a87adcf2bd6fa
+222151__ajaysm__bangu-21.wav
+https://freesound.org/s/222151/
+SHA256 5610bf5e02f61b447c0333e96417819d4273f6e2bfca12de71241b99bca05eac
+205972__ajaysm__daluo-01.wav
+https://freesound.org/s/205972/
+SHA256 e0b54aaf912927a770fa48b4edebbeed182804e79881fccab7da506e5d6bf1ed
+206023__ajaysm__daluo-04.wav
+https://freesound.org/s/206023/
+SHA256 4c722d0b303196e5e666292a277b97b610bda476eaa176b8280c4ee5b6c9378c
+222212__ajaysm__daluo-25.wav
+https://freesound.org/s/222212/
+SHA256 8ade4ceb5f0ae90d0a27d22033769c7b2fdf40c56b035e1588d6537fe2a06cad
+222230__ajaysm__daluo-43.wav
+https://freesound.org/s/222230/
+SHA256 768051085612f2de113786f19b71341060813d682c561e91448223e8278791c3
+205974__ajaysm__xiaoluo-01.wav
+https://freesound.org/s/205974/
+SHA256 e41d995db394804060c430a8a99598f3f898b9c7e0620c0994e9d83891124250
+222300__ajaysm__xiaoluo-03.wav
+https://freesound.org/s/222300/
+SHA256 a29bb37ea8842573c04d4d38d5953a04a7f85a50b9dad518dd3aa7546d6e4d2b
+222302__ajaysm__xiaoluo-05.wav
+https://freesound.org/s/222302/
+SHA256 e37752a5b6eb0870dec700d2f16b1e08b320a40b616fc1b2a1f1f067a88a5fe7
+222308__ajaysm__xiaoluo-11.wav
+https://freesound.org/s/222308/
+SHA256 a84706c6af7ca6fce3e576ec4aaaa38aee780d084b43fe6d606ead1cf65c0884
+205975__ajaysm__naobo-05.wav
+https://freesound.org/s/205975/
+SHA256 43ebd3c9fa694ce7f5f46120219e5627038ad16304aa8407f688c8b8a4ef71b9
+222255__ajaysm__naobo-19.wav
+https://freesound.org/s/222255/
+SHA256 515dda60b51d54ab9e319370364336d5bcfa6252e98b251102a04989954ecc07
+222256__ajaysm__naobo-20.wav
+https://freesound.org/s/222256/
+SHA256 0a8dc911ced31a531c3a4e68e557c495c98c03a63315ffbc9bd69acf770972d0
+222283__ajaysm__naobo-47.wav
+https://freesound.org/s/222283/
+SHA256 793410dd5af1588f6fe0dadc29d676f1d208d03f5c023c0e0ba716cb17eb79a0

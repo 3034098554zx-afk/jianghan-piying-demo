@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f2e8d8">
+  <meta name="description" content="江汉皮影戏。亲手刻一件皮影，上幕操偶，收藏字影文创。">
+  <title>江汉皮影戏</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%23f2e8d8%22%2F%3E%3Cpath%20d%3D%22M22%2013h20l14%2040H8Z%22%20fill%3D%22%23873927%22%2F%3E%3Cpath%20d%3D%22M28%2022h8l11%2031H17Z%22%20fill%3D%22%23e5b477%22%2F%3E%3Cpath%20d%3D%22M32%2013l-2%206h4Z%22%20fill%3D%22%23fff5e1%22%2F%3E%3C%2Fsvg%3E">
+  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="craft.css">
+  <link rel="stylesheet" href="personal.css">
+  <link rel="stylesheet" href="ui-system.css">
+  <script src="catalog.js" defer></script>
+  <script src="craft-ui.js" defer></script>
+  <script src="personal.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar" id="topbar"></header>
+    <main class="view" id="view" aria-label="江汉皮影戏"><div id="view-content"></div></main>
+    <nav class="tabbar" id="tabbar" aria-label="主要功能"></nav>
+    <div class="notice" id="notice" role="status" aria-live="polite"></div>
+    <dialog class="media-dialog" id="media-dialog" aria-label="作品预览">
+      <div class="media-heading"><span id="media-title"></span><button type="button" class="craft-back" id="close-media" aria-label="关闭预览"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+      <div id="media-content"></div>
+    </dialog>
+    <noscript>请在浏览器中开启 JavaScript 后体验江汉皮影戏。</noscript>
+  </div>
+</body>
+</html>
