@@ -773,7 +773,7 @@
       if (config.camera) frame.allow = "camera 'self'; autoplay 'self'; fullscreen 'self'";
       frame.className = 'experience';
       const frameUrl=new URL('experience/'+config.url,location.href);
-      frameUrl.searchParams.set("v","a54e378c9c");
+      frameUrl.searchParams.set("v","350f2ba1e6");
       frame.src=frameUrl.href;
       if (keepStage) {
         stageFrame = frame;
