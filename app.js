@@ -12,7 +12,6 @@
   const nativeTop = new URLSearchParams(location.search).get('jhWxTop');
   // The native page can report zero when its navigation already clears the view.
   if (nativeTop !== null && /^\d{1,3}$/.test(nativeTop) && Number(nativeTop) < screen.height / 2) {
-    document.documentElement.dataset.wechatHost = '';
     document.documentElement.style.setProperty('--wechat-top-overlap', Number(nativeTop) + 'px');
   }
   const glyphs = Object.assign(Object.create(null),Object.fromEntries(data.glyphs.map(glyph => [glyph.id,glyph])));
@@ -213,11 +212,11 @@
     }
     homeMediaObserver=new IntersectionObserver((entries,observer)=>{
       for (const entry of entries) {
-        if (entry.intersectionRatio<.22) continue;
+        if (!entry.isIntersecting) continue;
         observer.unobserve(entry.target);
         start(entry.target);
       }
-    },{root:view,rootMargin:'0px 0px 80px',threshold:.22});
+    },{root:view,rootMargin:'0px 0px 80px'});
     for (const image of images) homeMediaObserver.observe(image);
   }
 
@@ -791,7 +790,7 @@
       if (config.camera) frame.allow = "camera 'self'; autoplay 'self'; fullscreen 'self'";
       frame.className = 'experience';
       const frameUrl=new URL('experience/'+config.url,location.href);
-      frameUrl.searchParams.set("v","3b60c5b27e");
+      frameUrl.searchParams.set("v","1b82897069");
       frame.src=frameUrl.href;
       if (keepStage) {
         stageFrame = frame;

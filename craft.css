@@ -22,8 +22,8 @@
 .mobile-maker:not(.show-import) body {background: transparent; color: var(--craft-ink); min-height: 100dvh}
 .app.craft-flow .topbar {
   grid-template-columns: 44px minmax(0,1fr) minmax(44px, max-content);
-  min-height: calc(62px + var(--header-inset));
-  padding-top: calc(6px + var(--header-inset));
+  min-height: calc(62px + var(--safe-top));
+  padding-top: calc(6px + var(--safe-top));
   color: var(--craft-cinnabar);
   border: 0; background: transparent;
 }
