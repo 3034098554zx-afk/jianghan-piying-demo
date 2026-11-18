@@ -22,15 +22,15 @@
 .mobile-maker:not(.show-import) body {background: transparent; color: var(--craft-ink); min-height: 100dvh}
 .app.craft-flow .topbar {
   grid-template-columns: 44px minmax(0,1fr) minmax(44px, max-content);
-  min-height: calc(62px + var(--safe-top));
-  padding: calc(6px + var(--safe-top)) var(--craft-gap) 0;
+  min-height: calc(62px + var(--header-inset));
+  padding-top: calc(6px + var(--header-inset));
   color: var(--craft-cinnabar);
   border: 0; background: transparent;
 }
 .app.craft-flow .view {color: var(--craft-ink)}
 .app.craft-work .topbar {display: none}
 .app.craft-work .view {grid-row: 1 / 3}
-.app.craft-work .experience {inset: var(--safe-top) 0 auto; height: calc(100% - var(--safe-top) - var(--safe-bottom))}
+.app.craft-work .experience {inset: 0 0 auto; height: calc(100% - var(--safe-bottom))}
 .craft-back {
   display: inline-grid; place-items: center; width: 42px; height: 42px; flex: none; padding: 0;
   border: 1px solid #fff9edcf; border-radius: 50%; background: #fff1ddbb; color: var(--craft-cinnabar);
@@ -72,7 +72,27 @@
 .craft-hero-card {
   display: flex; flex-direction: column; align-items: center; min-height: clamp(225px,35svh,307px);
   margin-bottom: 11px; padding: 17px 16px 12px;
-  background: linear-gradient(85deg,#fff5e3c9, #fae6c73b 60%,transparent 88%),url("assets/craft-hero.webp") 58% center / cover;
+  isolation: isolate;
+  background: linear-gradient(135deg, #fff4e1, #f3d6ad);
+}
+.craft-hero-photo {
+  position: absolute;
+  inset: 0 0 0 auto;
+  z-index: -2;
+  width: 78%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 12% center;
+  mask-image: linear-gradient(90deg, transparent, #000 33%);
+}
+.craft-hero-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(90deg, #fff3df 0%, #fff2dfed 30%, #fff2dec0 40%, #f5ddb83d 56%, transparent 71%),
+    linear-gradient(0deg, #f3d2a8 0%, #f2d1a880 18%, transparent 43%);
 }
 .craft-hero-card > div {position:relative; z-index:1; align-self:stretch; margin-bottom:12px}
 .craft-hero-card h1 {margin:0; font: 720 clamp(27px,8.6vw,39px)/1.15 var(--craft-serif); color: var(--craft-cinnabar); transform: skewX(-4deg); transform-origin:left}
@@ -164,7 +184,12 @@
 .mobile-maker #editor.mobile-step {display:flex; flex-direction:column; margin:0; padding:0; width:100%; max-width:none; min-height:100dvh; height:auto; overflow:visible; font-family:var(--craft-serif)}
 .mobile-maker #editor.mobile-step[hidden] {display:none !important}
 .mobile-maker .mobile-step :is(#workflow,.editor-head,#scene-hud,.next-block,#expand-scene) {display:none !important}
-.craft-inner-nav {display:flex; gap:12px; align-items:center; position:relative; min-height:56px; padding:7px var(--craft-gap) 4px; color:var(--craft-ink)}
+.mobile-maker {--editor-safe-top: var(--frame-top-inset, env(safe-area-inset-top,0px))}
+.craft-inner-nav {
+  display:flex; gap:12px; align-items:center; position:relative;
+  min-height:calc(56px + var(--editor-safe-top)); padding:calc(7px + var(--editor-safe-top)) var(--craft-gap) 4px;
+  color:var(--craft-ink);
+}
 .craft-inner-nav strong {font:690 17px/1.22 var(--craft-serif)}
 .craft-inner-nav small {display:block; color:#734d32; font:530 11px/1.35 var(--craft-serif)}
 .craft-inner-nav .craft-back {width:39px; height:39px}
@@ -187,7 +212,7 @@
 .mobile-maker .mobile-step .canvas-top > span:first-child {color:#774122; font-weight:630}
 .mobile-maker .mobile-step .canvas-bottom #transparency {min-height:34px; color:#824023; font:630 10px/1.3 var(--craft-serif); white-space:nowrap}
 .mobile-maker .mobile-step .canvas-wrap {
-  position:relative; display:block; flex:none; width:100%; min-height:0; max-height:none; height:clamp(195px,31svh,311px);
+  position:relative; display:block; flex:none; width:100%; min-height:0; max-height:none; height:clamp(195px,calc(31svh - var(--editor-safe-top)),311px);
   overflow:hidden; background:radial-gradient(ellipse at 52% 40%,#fff0d7aa,#f5d4a94d 62%,#dbac7699), url("assets/craft-paper.webp") center / cover;
 }
 .mobile-maker .mobile-step .canvas-wrap.checker {background-color:#f0d8b7;background-image:conic-gradient(#e6c6a390 25%,transparent 0 50%,#e6c6a390 0 75%,transparent 0);background-size:18px 18px}
@@ -294,18 +319,28 @@
   .craft-step-strip {margin-bottom:7px}
   .craft-editor-head .craft-step-strip {margin-bottom:6px}
   .craft-intro {margin-bottom:6px}
-  .craft-inner-nav {min-height:47px; padding-top:5px}
+  .craft-inner-nav {min-height:calc(47px + var(--editor-safe-top)); padding-top:calc(5px + var(--editor-safe-top))}
   .craft-hero-card {min-height:207px}
   .craft-footer {padding-top:8px}
 }
 
-.app.craft-work:not(.in-detail) .experience {height:calc(100% - var(--safe-top))}
+.app.craft-work:not(.in-detail) .experience {height:100%}
 .mobile-maker .mobile-step[data-mobile-stage=perform] .craft-inner-nav {z-index:6;padding-bottom:8px}
 .mobile-maker .mobile-step[data-mobile-stage=perform] .craft-inner-nav strong {display:block;font-size:clamp(21px,6.3vw,28px);color:var(--craft-cinnabar)}
 .mobile-maker .mobile-step[data-mobile-stage=perform] .workspace {gap:0;margin-inline:0}
 .mobile-maker .mobile-step[data-mobile-stage=perform] .canvas-panel {border:0;border-radius:0;box-shadow:none;background:transparent}
 .mobile-maker .mobile-step[data-mobile-stage=perform] :is(.canvas-top,.canvas-bottom,.part-rail,.tools,.mobile-canvas-tools) {display:none !important}
-.mobile-maker .mobile-step[data-mobile-stage=perform] .canvas-wrap {height:clamp(195px,43.8svh,431px);border-radius:0;background:transparent}
+.mobile-maker .mobile-step[data-mobile-stage=perform] {
+  --stage-header-base: clamp(61px,12.1svh,111px);
+  --stage-header-pad: max(clamp(10px,2.15svh,22px), calc(var(--editor-safe-top) + 4px));
+  --stage-header-size: max(var(--stage-header-base), calc(var(--stage-header-pad) + 52px));
+  --stage-canvas-size: clamp(195px,43.8svh,431px);
+}
+.mobile-maker .mobile-step[data-mobile-stage=perform] .canvas-wrap {
+  height:max(194px,calc(var(--stage-canvas-size) + var(--stage-header-base) - var(--stage-header-size)));
+  border-radius:0;
+  background:transparent;
+}
 .theatre-overlay {position:absolute;inset:0;z-index:3;pointer-events:none}
 .theatre-rail {
   display:grid;gap:1px;padding:3px;z-index:3;position:absolute;top:53%;transform:translateY(-50%);
@@ -381,7 +416,7 @@
 @keyframes theatre-options-in {from {opacity:.4;translate:0 -5px} to {opacity:1;translate:0 0}}
 @keyframes recording-pulse {to {filter:brightness(1.26)}}
 @media(max-height:710px) {
-  .mobile-maker .mobile-step[data-mobile-stage=perform] .canvas-wrap {height:clamp(190px,43.8svh,280px)}
+  .mobile-maker .mobile-step[data-mobile-stage=perform] {--stage-canvas-size: clamp(194px,43.8svh,280px)}
   .theatre-work-area {gap:5px}
 }
 
@@ -398,8 +433,28 @@
 /* The controls float above a single full-screen theatre photograph. */
 .mobile-maker #editor.mobile-step[data-mobile-stage=perform] {position:relative;isolation:isolate;background:none;}
 .theatre-backdrop {position:absolute;z-index:-1;inset:0;display:block;width:100%;height:100%;object-fit:fill;pointer-events:none;transition:filter .35s ease;}
-.mobile-maker .mobile-step[data-mobile-stage=perform] .craft-inner-nav {min-height:clamp(61px,12.1svh,111px);align-items:flex-start;padding-top:clamp(10px,2.15svh,22px);background:transparent;}
-.mobile-maker .mobile-step[data-mobile-stage=perform] .craft-inner-nav > span {margin-top:1px;}
+.mobile-maker .mobile-step[data-mobile-stage=perform] .craft-inner-nav {
+  min-height:var(--stage-header-size);
+  align-items:flex-start;
+  padding-top:var(--stage-header-pad);
+  background:transparent;
+}
+.mobile-maker .mobile-step[data-mobile-stage=perform] .craft-inner-nav > span {margin-top:1px;min-width:0}
+.mobile-maker:not(.camera-room) .mobile-step[data-mobile-stage=perform] .craft-inner-nav > span {
+  position:relative;
+  isolation:isolate;
+  flex:0 1 auto;
+  margin-inline-end:auto;
+  text-shadow:0 1px 2px #fff2db,0 0 7px #fff2dbbf;
+}
+.mobile-maker:not(.camera-room) .mobile-step[data-mobile-stage=perform] .craft-inner-nav > span::before {
+  content:"";
+  position:absolute;
+  z-index:-1;
+  inset:-16px -24px -16px -24px;
+  pointer-events:none;
+  background:radial-gradient(ellipse closest-side at 50% 57%, #fff3dce6 5%, #fff0dba6 51%, #fff0db3d 77%, #fff0db00 100%);
+}
 .mobile-maker .mobile-step[data-mobile-stage=perform] .theatre-more {background:#ffefdcce;backdrop-filter:blur(8px);}
 .theatre-rail {border-radius:19px;}
 .stage-toggle {background:#f9e8d1ec;backdrop-filter:blur(8px);}
@@ -454,7 +509,8 @@
 .camera-room .theatre-backdrop {z-index:0;opacity:.98}
 .camera-room .mobile-step[data-mobile-stage=perform] :is(.workspace,.theatre-footer) {position:relative;z-index:1}
 .camera-room.mobile-maker .mobile-step[data-mobile-stage=perform] .craft-inner-nav {
-  min-height:calc(69px + env(safe-area-inset-top,0px));padding:13px var(--craft-gap) 8px;
+  min-height:max(69px, calc(var(--editor-safe-top) + 56px));
+  padding-top:max(13px, calc(var(--editor-safe-top) + 4px));
 }
 .camera-room.mobile-maker .mobile-step[data-mobile-stage=perform] .craft-inner-nav strong {color:#feeacc}
 .camera-room .craft-inner-nav small {color:#e6bb8b}

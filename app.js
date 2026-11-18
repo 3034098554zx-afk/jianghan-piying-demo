@@ -7,6 +7,14 @@
   const app = $('#app');
   const view = $('#view');
   const content = $('#view-content');
+  const topbar = $('#topbar');
+  const insetMeasure = $('.header-inset-measure');
+  const nativeTop = new URLSearchParams(location.search).get('jhWxTop');
+  // The native page can report zero when its navigation already clears the view.
+  if (nativeTop !== null && /^\d{1,3}$/.test(nativeTop) && Number(nativeTop) < screen.height / 2) {
+    document.documentElement.dataset.wechatHost = '';
+    document.documentElement.style.setProperty('--wechat-top-overlap', Number(nativeTop) + 'px');
+  }
   const glyphs = Object.assign(Object.create(null),Object.fromEntries(data.glyphs.map(glyph => [glyph.id,glyph])));
   const threeFilm = 'stage/watch/film-three';
   const tabs = [
@@ -14,10 +22,10 @@
     ['shop','文创','gift'], ['case','我的','profile']
   ];
   const paths = {
-    home:'<path d="m3 10 9-7 9 7M5 10v10h5v-5h4v5h5V10"/>',
-    gift:'<path d="M3 8h18v4H3zM5 12v8h14v-8M12 8v12"/><path d="M12 8H8.6a2.9 2.9 0 1 1 2.1-4.7L12 8Zm0 0h3.4a2.9 2.9 0 1 0-2.1-4.7L12 8Z"/>',
-    profile:'<circle cx="12" cy="7" r="4"/><path d="M4.5 21v-1.3a7.5 7.5 0 0 1 15 0V21z"/>',
-    lens:'<circle cx="12" cy="12" r="8.3"/><circle cx="12" cy="12" r="2.8" fill="currentColor" stroke="none"/>',
+    home:'<path d="M2.8 10.5 11 3.9a1.6 1.6 0 0 1 2 0l8.2 6.6M5.1 10.1v8.6c0 .7.6 1.3 1.3 1.3H10v-4.4h4V20h3.6c.7 0 1.3-.6 1.3-1.3v-8.6M9.6 10.5h4.8"/>',
+    gift:'<rect x="3" y="8" width="18" height="4.6" rx="1.35"/><path d="M5 12.6v6.1A1.3 1.3 0 0 0 6.3 20h11.4a1.3 1.3 0 0 0 1.3-1.3v-6.1M12 8v12M12 8H8.5a2.5 2.5 0 1 1 1.8-4.2L12 8Zm0 0h3.5a2.5 2.5 0 1 0-1.8-4.2L12 8Z"/>',
+    profile:'<circle cx="12" cy="7" r="3.85"/><path d="M5.1 20.5c-.7 0-1.1-.5-1.1-1.15a8 8 0 0 1 16 0c0 .65-.4 1.15-1.1 1.15Z"/>',
+    lens:'<circle cx="12" cy="12" r="8.3"/><path d="M10.3 8.9a.45.45 0 0 0-.7.4v5.4a.45.45 0 0 0 .7.4l4.4-2.7a.47.47 0 0 0 0-.8Z" fill="currentColor" stroke="none"/>',
     river:'<path fill="currentColor" stroke="none" d="M2.2 15.9c5.1-2.8 7.6-3.2 11.1-1.5 3 1.5 5.9 2.2 8.5 1.6-3.3 2.2-6.5 1.6-10.4-.1-3-1.3-5.8-.6-9.2.1Zm3.4-5.6C9 7.1 12.7 6 16.5 7.5c2 .9 3.8 1.9 5.6 1.9-2.4.9-4.6.5-7.1-.4-2.8-.9-5.9 0-9.4 1.3Z"/><path d="M2 12.9c4.5-.6 7.8-3.5 12.6-1.7 3.9 1.5 6 1.6 8.2.4M3.3 18.7c4.5-.5 6.1-1.2 9.9.3" stroke-width=".7" opacity=".65"/>',
     chisel:'<path fill="currentColor" stroke="none" d="m14.7 8.3 5.2-5.5a1.5 1.5 0 0 1 2.2 2.1l-5.2 5.5zM11 12.5l3-3.4 2.1 2-3 3.3zM2.4 20.2l4.7-2.1 3.1-4.6 2.1 2-3.4 4.8L2 22z"/>',
     type:'<path d="M3.6 5.1h15.9M5.5 12.2h15M8 3v17m6.2-5.8v4.3l-2 2.4h-3M18.7 3.8v16.7"/><path d="M15.2 6.7h5.4M16.1 13.9h5.8" stroke-width=".75" opacity=".5"/>',
@@ -293,12 +301,12 @@
 
   function explore() {
     return '<div class="explore-page">'+heading('探索江汉','从影偶的纹样、唱腔和关节，读懂一场皮影戏。')+
-      '<section class="heritage-card"><img src="'+asset('backstage.webp')+'" alt="灯幕背后的皮影戏台">'+
+      '<section class="heritage-card"><img src="'+asset('heritage-lantern-duet.webp')+'" alt="灯幕上同台的两件彩绘皮影" decoding="async">'+
       '<div><h2>江汉平原的灯幕</h2><p>江汉平原皮影戏主要流传在潜江、天门、沔阳（今仙桃）一带。2006 年，湖北潜江申报的江汉平原皮影戏进入第一批国家级非遗名录。</p>'+
       sourceLink('listing')+'</div></section>'+
       '<section class="section"><div class="section-heading rule-heading"><h2>唱腔与工艺</h2></div><div class="explore-grid">'+
-      exploreCard('explore/stagecraft','stage-room.webp','从幕后到台前','听唱腔，看操偶')+
-      exploreCard('explore/process','craft-hero.webp','影偶怎么做','潜江汤格皮影八道工序')+'</div></section>'+
+      exploreCard('explore/stagecraft','heritage-backstage-performance.webp','从幕后到台前','听唱腔，看操偶')+
+      exploreCard('explore/process','heritage-puppet-craft.webp','影偶怎么做','潜江汤格皮影八道工序')+'</div></section>'+
       '<section class="section"><div class="section-heading rule-heading"><h2>影偶与影像</h2></div>'+
       photoCover()+filmLink()+row('stage/gallery','video','海报与影像','看原创海报和字影演示')+'</section></div>';
   }
@@ -313,7 +321,7 @@
 
   function exploreProcess() {
     return '<article class="heritage-article">'+heading('影偶怎么做','潜江汤格皮影的八道传统工序')+
-      '<img class="heritage-banner process-banner" src="'+asset('craft-hero.webp')+'" alt="皮影镂花和刻刀">'+
+      '<img class="heritage-banner process-banner" src="'+asset('heritage-puppet-craft.webp')+'" alt="艺人举起一件彩绘皮影" decoding="async">'+
       '<div class="heritage-notes"><p class="process-lead">江汉平原皮影的雕镂有汤格、郭格等传承。这里以潜江传承人汤先成演示的汤格工艺为例。</p>'+
       '<ol class="process-list">'+data.heritage.process.map(([title,copy])=>'<li><div><strong>'+title+'</strong><p>'+copy+'</p></div></li>').join('')+'</ol>'+
       sourceLink('process')+'</div><div class="heritage-action">'+goButton('make','亲手制作一个字影 '+icon('next'),'primary-button')+'</div></article>';
@@ -421,7 +429,8 @@
     return '<div class="craft-landing"><p class="craft-deck">体验五步工艺，亲手制作一件皮影</p>'+
       '<section class="craft-progress-card"><h2>制作进度</h2>'+Craft.progress(ongoing?.stage||'')+
       (ongoing?'<p class="craft-progress-note">'+ongoing.title+' · '+ongoing.step+'</p>':'')+'</section>'+
-      '<section class="craft-hero-card"><div><h1>五步制影<br>亲手体验</h1><p>从一张皮开始，<br>雕刻、上色、装配，<br>再让字影登上灯幕。</p></div>'+
+      '<section class="craft-hero-card"><img class="craft-hero-photo" src="'+asset('craft-puppet-workshop.webp')+'" alt="艺人在工坊展示彩绘皮影" decoding="async">'+
+      '<div><h1>五步制影<br>亲手体验</h1><p>从一张皮开始，<br>雕刻、上色、装配，<br>再让字影登上灯幕。</p></div>'+
       Craft.waves+goButton(ongoing?.route||'make/choose',(ongoing?'继续制作':'开始制作')+' '+Craft.icon('next'),'craft-primary craft-start')+'</section>'+
       (ongoing?'<div class="craft-another">'+goButton('make/choose','换个字制作 '+Craft.icon('next'),'text-button')+'</div>':'')+
       '<section class="craft-works-card"><div class="section-heading rule-heading"><h2>我的作品</h2>'+
@@ -717,7 +726,7 @@
   function updateHeader(deep, title, tab) {
     const bagAction = '<button class="top-action" type="button" data-go="shop/bag" aria-label="购物袋 '+checkoutCount()+' 件">'+icon('bag')+
       (checkoutCount()?'<span class="bag-count">'+Math.min(checkoutCount(),99)+'</span>':'')+'</button>';
-    const top = $('#topbar');
+    const top = topbar;
     if (tab==='make'&&route!=='make/import'&&!app.classList.contains('craft-work')) {
       top.innerHTML = '<button type="button" class="craft-back" data-back aria-label="返回">'+Craft.icon('back')+'</button>'+
         '<span class="craft-nav-title"><span aria-hidden="true"></span>'+title+'<span aria-hidden="true"></span></span>'+
@@ -746,8 +755,17 @@
   }
 
   function sendFrameSettings(target) {
-    target.contentWindow?.postMessage({app:'jianghan-mobile',type:'interface-options',lessMotion:personal.lessMotion()},
-      location.protocol==='file'?'*':location.origin);
+    const topInset = app.classList.contains('craft-work') ? insetMeasure.getBoundingClientRect().height : 0;
+    target.contentWindow?.postMessage({
+      app:'jianghan-mobile',type:'interface-options',lessMotion:reduceInterface(),topInset
+    },location.protocol==='file:'?'*':location.origin);
+  }
+
+  function syncHeaderLayout() {
+    if (app.classList.contains('is-home')) {
+      view.style.setProperty('--home-header-height', topbar.getBoundingClientRect().height + 'px');
+    }
+    if (frame?.classList.contains('ready')) sendFrameSettings(frame);
   }
 
   function showStage(visible) {
@@ -773,7 +791,7 @@
       if (config.camera) frame.allow = "camera 'self'; autoplay 'self'; fullscreen 'self'";
       frame.className = 'experience';
       const frameUrl=new URL('experience/'+config.url,location.href);
-      frameUrl.searchParams.set("v","350f2ba1e6");
+      frameUrl.searchParams.set("v","3b60c5b27e");
       frame.src=frameUrl.href;
       if (keepStage) {
         stageFrame = frame;
@@ -787,12 +805,13 @@
 
   function animatePage(previous,next) {
     pageMotion?.cancel();
-    if (reduceInterface()||!previous||previous===next) return;
+    if (reduceInterface()||!previous||previous===next||app.classList.contains('in-experience')) return;
     const from = tabs.findIndex(([id])=>id===previous);
     const to = tabs.findIndex(([id])=>id===next);
-    const shift = from>=0&&to>=0 ? (to>from?'5px 0':'-5px 0') : '0 3px';
-    pageMotion = view.animate([{opacity:.92,translate:shift},{opacity:1,translate:'0 0'}],
-      {duration:185,easing:'cubic-bezier(.2,.75,.22,1)'});
+    const shift = from>=0&&to>=0 ? (to>from?'4px 0':'-4px 0') : '0 4px';
+    const panel = next==='stage' ? view.querySelector('.home-intro') : view;
+    pageMotion = panel?.animate([{opacity:.95,translate:shift},{opacity:1,translate:'0 0'}],
+      {duration:200,easing:'cubic-bezier(.2,.75,.24,1)'});
   }
 
   function render(next, restore = false) {
@@ -834,6 +853,7 @@
     const title = titleFor(next,embedded);
     document.title = deep?title+' · 江汉皮影戏':'江汉皮影戏';
     updateHeader(deep,title,tab);
+    syncHeaderLayout();
 
     if (embedded) {
       if (sub==='solo') {
@@ -947,12 +967,18 @@
       content.innerHTML=chooseCraft();
       view.scrollTop=scroll;
       view.querySelector('[data-craft-pick="'+makerChoice+'"]').focus({preventScroll:true});
-    } else if (d.category) {
+    } else if (d.category && d.category!==category) {
+      const previousTabs = button.closest('.category-tabs');
+      const viewTop = view.getBoundingClientRect().top;
+      const tabOffset = Math.max(0, previousTabs.getBoundingClientRect().top - viewTop);
+      const tabScroll = previousTabs.scrollLeft;
       category = d.category;
-      const y = view.scrollTop;
       content.innerHTML = shop();
-      view.scrollTop = y;
-      view.querySelector('[data-category="'+category+'"]')?.focus({preventScroll:true});
+      const nextTabs = view.querySelector('.category-tabs');
+      view.scrollTop = 0;
+      view.scrollTop = Math.max(0, nextTabs.getBoundingClientRect().top - viewTop - tabOffset);
+      nextTabs.scrollLeft = tabScroll;
+      nextTabs.querySelector('[aria-pressed="true"]')?.focus({preventScroll:true});
       connectProductImages();
     } else if (d.productShot) selectProductShot(button);
     else if (d.add) {
@@ -1108,5 +1134,12 @@
   }
   window.addEventListener('popstate',syncHistory);
   window.addEventListener('hashchange',syncHistory);
+  if ('ResizeObserver' in window) {
+    const layoutObserver = new ResizeObserver(syncHeaderLayout);
+    layoutObserver.observe(topbar);
+    layoutObserver.observe(insetMeasure);
+  } else {
+    window.addEventListener('resize',syncHeaderLayout);
+  }
   syncHistory();
 })();

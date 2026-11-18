@@ -12,9 +12,14 @@
   --serif: "Jianghan Serif", "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
   --sans: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   --gutter: clamp(16px, 5vw, 24px);
-  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-top: max(env(safe-area-inset-top, 0px), var(--wechat-top-overlap, 0px));
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --mobile-heading-room: 0px;
+  --header-inset: max(var(--safe-top), var(--mobile-heading-room));
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --bottom-gap: 21px;
+  --bottom-gap: 13px;
+  --tab-height: 79px;
 }
 
 @font-face {
@@ -47,6 +52,11 @@
 
 .app.is-home, .startup-message {
   --serif: "Jianghan Opening", "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+}
+
+@media (max-width: 599px) and (orientation: portrait) {
+  /* Keep the same heading spacing in rectangular phone previews. */
+  :root:not([data-wechat-host]) {--mobile-heading-room: clamp(29px, 10vw, 41px)}
 }
 
 *, *::before, *::after {box-sizing: border-box}
@@ -82,7 +92,21 @@ img {max-width: 100%}
 .view {position: relative; grid-row: 2; min-height: 0; overflow: auto; overscroll-behavior: contain; scrollbar-width: none}
 #view-content {display: contents}
 .view::-webkit-scrollbar, .category-tabs::-webkit-scrollbar {display: none}
-.is-home .view {grid-row: 1 / 3}
+.is-home {
+  --home-brand-pad: 18px;
+  --home-intro-top: clamp(98px,13.2svh,124px);
+  --home-intro-gap: 22px;
+}
+.is-home .view {grid-row: 1 / 3; scroll-padding-top: calc(var(--home-header-height, 0px) + 8px)}
+.header-inset-measure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: var(--header-inset);
+  visibility: hidden;
+  pointer-events: none;
+}
 .in-experience .view {overflow: hidden}
 .topbar {
   position: relative;
@@ -91,8 +115,8 @@ img {max-width: 100%}
   display: grid;
   grid-template-columns: 44px minmax(0,1fr) 44px;
   align-items: center;
-  min-height: calc(53px + var(--safe-top));
-  padding: var(--safe-top) 12px 0;
+  min-height: calc(53px + var(--header-inset));
+  padding: var(--header-inset) max(var(--gutter), var(--safe-right)) 0 max(var(--gutter), var(--safe-left));
   color: var(--ink);
   border-bottom: 1px solid #b8875d22;
   background: #f8eedfcf;
@@ -103,7 +127,8 @@ img {max-width: 100%}
   display: flex;
   justify-content: space-between;
   gap: 6px;
-  padding: calc(var(--safe-top) + 18px) var(--gutter) 8px;
+  padding-top: max(calc(var(--safe-top) + 4px), calc(var(--home-brand-pad) + var(--mobile-heading-room)));
+  padding-bottom: 8px;
   transition: background-color .2s, border-color .2s;
   background: transparent;
   border-color: transparent;
@@ -111,8 +136,9 @@ img {max-width: 100%}
 .is-home.home-scrolled .topbar {background: #f8eedff0; backdrop-filter: blur(16px); border-color: #b8875d22}
 .brand-button {display: inline-flex; align-items: center; gap: 7px; text-align: left; min-height: 47px; min-width: 0}
 .brand-button .brand-mark {width: clamp(34px, 10vw, 46px); height: auto; align-self: center}
+.brand-button > span {min-width: 0}
 .brand-button strong {font: 650 clamp(19px, 5.6vw, 26px)/1.12 var(--serif); white-space: nowrap}
-.brand-button small {display: block; margin-top: 4px; font: 500 clamp(8px, 2.57vw, 11px)/1.4 var(--serif); white-space: nowrap; color: #594031; letter-spacing: .018em}
+.brand-button small {display: block; margin-top: 4px; font: 500 clamp(8px, 2.57vw, 11px)/1.4 var(--serif); text-wrap: pretty; color: #594031; letter-spacing: .018em}
 .home-tools {position: relative; flex: none}
 .tool-capsule {display: flex; align-items: center; min-height: 37px; background: #fbf4e9d9; border-radius: 100px; box-shadow: inset 0 1px 0 #fff9edb3}
 .tool-capsule button {display: grid; place-items: center; width: 39px; height: 37px}
@@ -146,7 +172,7 @@ img {max-width: 100%}
 .startup-retry {visibility: hidden; animation: startup-retry-visible 0s 7s forwards}
 @keyframes startup-retry-visible {to {visibility: visible}}
 
-.home-hero {position: relative; isolation: isolate; min-height: calc(clamp(293px,44svh,396px) + var(--safe-top))}
+.home-hero {position: relative; isolation: isolate; min-height: clamp(293px,44svh,396px)}
 .home-hero::before {
   content: ""; position: absolute; z-index: -2; inset: 0 0 -18px;
   background: url("assets/home-curtain-opening.webp") center 15% / cover no-repeat;
@@ -157,7 +183,10 @@ img {max-width: 100%}
   background: linear-gradient(90deg,#f7ecda8c,#f9eddd22 64%,transparent 84%);
   mask-image: linear-gradient(#000 75%,transparent);
 }
-.home-intro {padding: calc(clamp(98px,13.2svh,124px) + var(--safe-top)) calc(var(--gutter) + 6px) 25px}
+.home-intro {
+  padding: max(var(--home-intro-top), calc(var(--home-header-height, 0px) + var(--home-intro-gap)))
+    max(calc(var(--gutter) + 6px),var(--safe-right)) 25px max(calc(var(--gutter) + 6px),var(--safe-left));
+}
 .home-intro h1 {
   transform: skewX(-4deg); transform-origin: left; color: #6c2618;
   font: 680 clamp(32px,9.5vw,43px)/1.12 var(--serif); letter-spacing: -.018em;
@@ -254,7 +283,15 @@ img {max-width: 100%}
 }
 .text-button {display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-height: 44px; font: 500 13px/1.45 var(--serif); color: #714b33}
 .text-button svg {width: 15px; height: 15px}
-.tabbar {position: relative; z-index: 3; grid-row: 3; display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); height: calc(85px + var(--safe-bottom)); padding: 7px 9px calc(var(--bottom-gap) + var(--safe-bottom))}
+.tabbar {
+  position: relative;
+  z-index: 3;
+  grid-row: 3;
+  display: grid;
+  grid-template-columns: repeat(5,minmax(0,1fr));
+  height: calc(var(--tab-height) + var(--safe-bottom));
+  padding: 7px 9px calc(var(--bottom-gap) + var(--safe-bottom));
+}
 .nav-surface {position: absolute; z-index: -1; inset: -7px 0 0; width: 100%; height: calc(100% + 7px); overflow: visible; filter: drop-shadow(0 -4px 9px #866b4610); pointer-events: none}
 .nav-surface path {fill: #f8eee1; stroke: #fff9ed; stroke-width: 1px; vector-effect: non-scaling-stroke}
 .nav-tab {position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; padding-bottom: 1px; min-height: 0; font: 600 13px/1.16 var(--serif); color: #68442e}
@@ -291,7 +328,7 @@ img {max-width: 100%}
 .row-copy small {margin-top: 1px; color: var(--muted); font-size: 11.5px}
 .action-row > svg {width: 16px; height: 16px; color: #a15e3c}
 .heritage-card {margin: 0 var(--gutter) 14px; border-radius: 16px; overflow: hidden; background: var(--surface); box-shadow: var(--shadow)}
-.heritage-card > img {display: block; width: 100%; height: clamp(151px, 42vw, 208px); object-fit: cover; object-position: 74% 50%}
+.heritage-card > img {display: block; width: 100%; height: clamp(151px, 42vw, 208px); object-fit: cover; object-position: 50% 63%}
 .heritage-card > div {padding: 13px 15px 16px}
 .heritage-card h2 {color: var(--red); font-size: 20px}
 .heritage-card p {margin-top: 3px; font-size: 12px; color: var(--muted); line-height: 1.65}
@@ -395,8 +432,9 @@ img {max-width: 100%}
 .empty-bag {display: grid; justify-items: center; gap: 15px; padding: 31px 16px}
 .empty-bag > svg {width: 46px; height: 46px; color: var(--gold)}
 
-.is-explore .view {
-  background: linear-gradient(180deg,#fff4e61f 0%,var(--paper) 280px) no-repeat, url("assets/home-curtain.webp") right top / 100% auto no-repeat;
+.app.is-explore {
+  background: linear-gradient(180deg,#fff4e61f 0%,var(--paper) calc(280px + var(--header-inset))) no-repeat,
+    url("assets/home-curtain.webp") right top / 100% auto no-repeat, var(--paper);
 }
 .is-explore .page-heading p {font-family: var(--serif); font-weight: 535}
 .heritage-card {border: 1px solid #fff7e9dc; border-radius: 19px; box-shadow: 0 5px 16px #72422917}
@@ -413,6 +451,8 @@ img {max-width: 100%}
   background: #fcf2e3; box-shadow: 0 4px 14px #8d60321a;
 }
 .explore-card > img {display: block; width: 100%; aspect-ratio: 1.56; object-fit: cover; object-position: 59% 45%; background: #dcb98b}
+.explore-card[data-go="explore/stagecraft"] > img {object-position: center top}
+.explore-card[data-go="explore/process"] > img {object-position: 85% center}
 .explore-card-copy {display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 3px; align-items: center; width: 100%; padding: 8px 9px; min-height: 58px}
 .explore-card-copy strong,.explore-card-copy small,.photo-cover strong,.photo-cover small {display: block; font-family: var(--serif)}
 .explore-card-copy strong {font-size: clamp(13px,4vw,17px); line-height: 1.35; font-weight: 670}
@@ -434,7 +474,7 @@ img {max-width: 100%}
 .photo-cover > img {width: 44%; height: 70px; object-fit: contain; mix-blend-mode: multiply; opacity: .98}
 .photo-cover .explore-arrow {width: 20px}
 .heritage-banner {display: block; width: calc(100% - 2 * var(--gutter)); height: clamp(140px,40vw,190px); object-fit: cover; border-radius: 17px; margin: 0 var(--gutter) 14px}
-.process-banner {object-position: 62% center}
+.process-banner {object-position: center 28%}
 .heritage-notes {
   margin: 0 var(--gutter) 14px; padding: 7px 14px; border-radius: 17px;
   border: 1px solid #fff8ed; background: #fbf1e4e6; box-shadow: var(--shadow);
@@ -484,20 +524,21 @@ img {max-width: 100%}
 .media-heading {display: flex; align-items: center; justify-content: space-between; padding: 0 2px 4px; font: 650 17px var(--serif)}
 .media-heading .icon-button {font-size: 25px}
 @media (max-width: 355px) {
-  .is-home .topbar {padding-top: calc(var(--safe-top) + 12px)}
+  .is-home {--home-brand-pad: 12px}
   .tool-capsule button {width: 34px}
   .nav-tab {font-size: 12px}
 }
 @media (max-height: 725px) {
-  .is-home .topbar {padding-top: calc(var(--safe-top) + 8px); padding-bottom: 6px}
-  .home-hero {min-height: calc(clamp(269px,42svh,301px) + var(--safe-top))}
-  .home-intro {padding: calc(clamp(79px,12.2svh,92px) + var(--safe-top)) var(--gutter) 17px}
+  .is-home {--home-brand-pad: 8px; --home-intro-top: clamp(79px,12.2svh,92px); --home-intro-gap: 16px}
+  .is-home .topbar {padding-bottom: 6px}
+  .home-hero {min-height: clamp(269px,42svh,301px)}
+  .home-intro {padding-inline: max(var(--gutter),var(--safe-left)) max(var(--gutter),var(--safe-right)); padding-bottom: 17px}
   .home-intro h1 {font-size: clamp(30px,8.8vw,38px)}
   .hero-rule {margin: 12px 0 8px}
   .hero-enter {margin-top: 11px}
   .home-reel {--poster-width: min(66vw,30.5svh,236px)}
   .shortcut {min-height: 75px}
-  .tabbar {height: calc(79px + var(--safe-bottom))}
+  .tabbar {--tab-height: 73px}
   .nav-stage .seal {width: 49px}
   .nav-stage .tab-icon {height: 40px}
 }

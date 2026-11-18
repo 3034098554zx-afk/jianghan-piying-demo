@@ -184,6 +184,9 @@
     if(event.source!==parent||(location.protocol!=='file:'&&event.origin!==location.origin)) return;
     if(event.data?.app==='jianghan-mobile'&&event.data.type==='interface-options') {
       root.classList.toggle('reduce-interface-motion',event.data.lessMotion===true);
+      if (Number.isFinite(event.data.topInset) && event.data.topInset>=0) {
+        root.style.setProperty('--frame-top-inset', event.data.topInset + 'px');
+      }
     }
   });
   window.addEventListener('keydown',event=>{

@@ -20,7 +20,6 @@
   --ink: #30221d;
 }
 
-.app:not(.is-home) .topbar {padding-inline: var(--gutter)}
 .app .sub-title {font-weight: 690; color: #553324}
 
 .app .craft-back,
@@ -97,20 +96,49 @@
 .app :is(.heritage-card, .product-card, .photo-tile) {overflow: hidden}
 .app :is(.photo-tile-image, .product-card-text) {border-top: 1px solid #b58a6029}
 
-.app .tabbar {
-  --tab-height: 87px;
-  height: calc(var(--tab-height) + var(--safe-bottom));
-}
 .nav-surface path {fill: url(#nav-paper); stroke: #fffaf1}
 .nav-tab {transition: color .185s, scale .185s var(--ui-ease)}
 .nav-tab[aria-current], .nav-tab[aria-current] .tab-icon > svg {color: var(--ui-clay)}
-.nav-tab .tab-icon > svg, .nav-stage .seal {transition: color .185s, translate .185s var(--ui-ease), filter .185s}
+.nav-tab .tab-icon > svg, .nav-stage .seal {transition: color .185s, translate .185s var(--ui-ease), stroke-width .185s, filter .185s}
 .nav-stage .seal {color: #f6dcb8}
 .nav-stage[aria-current] .seal {color: #fff8e8; translate: 0 -1px}
 .nav-stage[aria-current] .seal-shape {stroke: #f6d4a3}
-.tab-marker {transition: transform .205s var(--ui-ease), translate .185s var(--ui-ease)}
+.tab-marker {transition: transform .21s var(--ui-ease), opacity .16s var(--ui-ease)}
 .tab-marker::before {background: var(--ui-clay); box-shadow: 0 1px 0 #fff9eb}
-.tabbar.stage-selected .tab-marker {translate: 0 calc(var(--tab-height) - var(--bottom-gap) - 4px)}
+.tabbar.stage-selected .tab-marker {opacity: 0}
+.nav-stage::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: calc(50% - 9.5px);
+  width: 19px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--ui-clay);
+  opacity: 0;
+  scale: .75 1;
+  pointer-events: none;
+  transition: opacity .16s var(--ui-ease), scale .2s var(--ui-ease);
+}
+.nav-stage[aria-current]::after {opacity: 1; scale: 1}
+
+.home-menu:not([hidden]) {
+  transform-origin: top right;
+  animation: home-menu-in .17s var(--ui-ease) both;
+}
+@keyframes home-menu-in {
+  from {opacity: 0; transform: translateY(-4px) scale(.98)}
+  to {opacity: 1; transform: translateY(0) scale(1)}
+}
+.app :is(.shortcut .seal, .profile-favorite svg, .product-card-text > svg, .profile-tool-next),
+.mobile-maker .theatre-entry > svg:last-child {
+  transition: translate .19s var(--ui-ease), scale .19s var(--ui-ease), fill .17s;
+}
+.app .shortcut:active .seal {translate: 0 2px}
+.app .profile-favorite:not([aria-pressed=true]) svg {fill: transparent}
+.app .profile-favorite:active svg {scale: .9}
+.app :is(.product-card:active .product-card-text > svg, .profile-tool:active .profile-tool-next),
+.mobile-maker .theatre-entry:active > svg:last-child {translate: 2px 0}
 
 .home-intro {text-shadow: 0 1px 14px #fff2e2a1}
 .shortcut[data-go=make] {color: var(--red); font-weight: 700}
@@ -165,8 +193,12 @@
 .app .product-card-text {padding: 8px 24px 8px 11px}
 .app .product-page .row-mark {border: 1px solid #e7c6a3}
 .app .product-bar {background: linear-gradient(#f8eddfec, #f8eddf); border-color: var(--ui-gold-line)}
-.app.is-account .view {
-  background: linear-gradient(160deg, #f9eee0ac, #f5ebdd 57%), url("assets/home-curtain.webp") right top / 100% auto no-repeat;
+.app.is-account {
+  background: linear-gradient(160deg, #f9eee0ac, #f5ebdd 57%), url("assets/home-curtain.webp") right top / 100% auto no-repeat, var(--paper);
+}
+.app:is(.is-account, .is-explore) .topbar {
+  background: linear-gradient(180deg, #f8eedf55, #f8eedf20);
+  border-color: #b8875d15;
 }
 .app .profile-card {
   border-color: var(--ui-cream-edge);
@@ -282,7 +314,7 @@
 }
 .theatre-dial[aria-disabled=true] {opacity: .56; cursor: default}
 .mobile-maker #editor.mobile-step.is-result[data-mobile-stage=perform] .canvas-wrap {
-  height: clamp(241px, 37.5svh, 392px);
+  height: max(220px, calc(clamp(241px, 37.5svh, 392px) + var(--stage-header-base) - var(--stage-header-size)));
 }
 .mobile-maker #editor.mobile-step.is-result .theatre-footer {padding-bottom: clamp(23px, 3.4svh, 32px)}
 .theatre-result {
@@ -315,9 +347,6 @@
 }
 .camera-actions .craft-primary {min-width: 0}
 
-@media (max-height: 725px) {
-  .app .tabbar {--tab-height: 81px}
-}
 @media (max-width: 355px) {
   .reel-title-group {gap: 5px}
   .reel-position {padding-inline: 5px}
