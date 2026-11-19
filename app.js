@@ -304,8 +304,8 @@
       '<div><h2>江汉平原的灯幕</h2><p>江汉平原皮影戏主要流传在潜江、天门、沔阳（今仙桃）一带。2006 年，湖北潜江申报的江汉平原皮影戏进入第一批国家级非遗名录。</p>'+
       sourceLink('listing')+'</div></section>'+
       '<section class="section"><div class="section-heading rule-heading"><h2>唱腔与工艺</h2></div><div class="explore-grid">'+
-      exploreCard('explore/stagecraft','heritage-backstage-performance.webp','从幕后到台前','听唱腔，看操偶')+
-      exploreCard('explore/process','heritage-puppet-craft.webp','影偶怎么做','潜江汤格皮影八道工序')+'</div></section>'+
+      exploreCard('explore/stagecraft','heritage-stagecraft-lamplight.webp','从幕后到台前','听唱腔，看操偶')+
+      exploreCard('explore/process','heritage-process-carving-lamplight.webp','影偶怎么做','潜江汤格皮影八道工序')+'</div></section>'+
       '<section class="section"><div class="section-heading rule-heading"><h2>影偶与影像</h2></div>'+
       photoCover()+filmLink()+row('stage/gallery','video','海报与影像','看原创海报和字影演示')+'</section></div>';
   }
@@ -320,7 +320,7 @@
 
   function exploreProcess() {
     return '<article class="heritage-article">'+heading('影偶怎么做','潜江汤格皮影的八道传统工序')+
-      '<img class="heritage-banner process-banner" src="'+asset('heritage-puppet-craft.webp')+'" alt="艺人举起一件彩绘皮影" decoding="async">'+
+      '<img class="heritage-banner process-banner" src="'+asset('heritage-process-carving-lamplight.webp')+'" alt="暖光下用刻刀雕刻皮料的细节" decoding="async">'+
       '<div class="heritage-notes"><p class="process-lead">江汉平原皮影的雕镂有汤格、郭格等传承。这里以潜江传承人汤先成演示的汤格工艺为例。</p>'+
       '<ol class="process-list">'+data.heritage.process.map(([title,copy])=>'<li><div><strong>'+title+'</strong><p>'+copy+'</p></div></li>').join('')+'</ol>'+
       sourceLink('process')+'</div><div class="heritage-action">'+goButton('make','亲手制作一个字影 '+icon('next'),'primary-button')+'</div></article>';
@@ -428,7 +428,7 @@
     return '<div class="craft-landing"><p class="craft-deck">体验五步工艺，亲手制作一件皮影</p>'+
       '<section class="craft-progress-card"><h2>制作进度</h2>'+Craft.progress(ongoing?.stage||'')+
       (ongoing?'<p class="craft-progress-note">'+ongoing.title+' · '+ongoing.step+'</p>':'')+'</section>'+
-      '<section class="craft-hero-card"><img class="craft-hero-photo" src="'+asset('craft-puppet-workshop.webp')+'" alt="艺人在工坊展示彩绘皮影" decoding="async">'+
+      '<section class="craft-hero-card"><img class="craft-hero-photo" src="'+asset('craft-maker-carving-portrait.webp')+'" alt="匠人在皮影工坊俯身雕刻皮料" decoding="async">'+
       '<div><h1>五步制影<br>亲手体验</h1><p>从一张皮开始，<br>雕刻、上色、装配，<br>再让字影登上灯幕。</p></div>'+
       Craft.waves+goButton(ongoing?.route||'make/choose',(ongoing?'继续制作':'开始制作')+' '+Craft.icon('next'),'craft-primary craft-start')+'</section>'+
       (ongoing?'<div class="craft-another">'+goButton('make/choose','换个字制作 '+Craft.icon('next'),'text-button')+'</div>':'')+

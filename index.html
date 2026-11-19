@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN" data-build="1b82897069">
+<html lang="zh-CN" data-build="99ffc34d22">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -448,8 +448,8 @@ img {max-width: 100%}
   background: #fcf2e3; box-shadow: 0 4px 14px #8d60321a;
 }
 .explore-card > img {display: block; width: 100%; aspect-ratio: 1.56; object-fit: cover; object-position: 59% 45%; background: #dcb98b}
-.explore-card[data-go="explore/stagecraft"] > img {object-position: center top}
-.explore-card[data-go="explore/process"] > img {object-position: 85% center}
+.explore-card[data-go="explore/stagecraft"] > img {object-position: 42% center}
+.explore-card[data-go="explore/process"] > img {object-position: 32% center}
 .explore-card-copy {display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 3px; align-items: center; width: 100%; padding: 8px 9px; min-height: 58px}
 .explore-card-copy strong,.explore-card-copy small,.photo-cover strong,.photo-cover small {display: block; font-family: var(--serif)}
 .explore-card-copy strong {font-size: clamp(13px,4vw,17px); line-height: 1.35; font-weight: 670}
@@ -471,7 +471,7 @@ img {max-width: 100%}
 .photo-cover > img {width: 44%; height: 70px; object-fit: contain; mix-blend-mode: multiply; opacity: .98}
 .photo-cover .explore-arrow {width: 20px}
 .heritage-banner {display: block; width: calc(100% - 2 * var(--gutter)); height: clamp(140px,40vw,190px); object-fit: cover; border-radius: 17px; margin: 0 var(--gutter) 14px}
-.process-banner {object-position: center 28%}
+.process-banner {object-position: center 55%}
 .heritage-notes {
   margin: 0 var(--gutter) 14px; padding: 7px 14px; border-radius: 17px;
   border: 1px solid #fff8ed; background: #fbf1e4e6; box-shadow: var(--shadow);
@@ -624,13 +624,13 @@ img {max-width: 100%}
 }
 .craft-hero-photo {
   position: absolute;
-  inset: 0 0 0 auto;
+  inset: 0;
   z-index: -2;
-  width: 78%;
+  width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 12% center;
-  mask-image: linear-gradient(90deg, transparent, #000 33%);
+  object-position: 20% center;
+  mask-image: linear-gradient(90deg, transparent 4%, #000 37%);
 }
 .craft-hero-card::before {
   content: "";
@@ -638,8 +638,8 @@ img {max-width: 100%}
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: linear-gradient(90deg, #fff3df 0%, #fff2dfed 30%, #fff2dec0 40%, #f5ddb83d 56%, transparent 71%),
-    linear-gradient(0deg, #f3d2a8 0%, #f2d1a880 18%, transparent 43%);
+  background: linear-gradient(90deg, #fff3df 0%, #fff2dfed 25%, #fff2ded4 34%, #fff0dc50 45%, transparent 57%),
+    linear-gradient(0deg, #f3d2a8 0%, #f2d1a875 14%, transparent 38%);
 }
 .craft-hero-card > div {position:relative; z-index:1; align-self:stretch; margin-bottom:12px}
 .craft-hero-card h1 {margin:0; font: 720 clamp(27px,8.6vw,39px)/1.15 var(--craft-serif); color: var(--craft-cinnabar); transform: skewX(-4deg); transform-origin:left}
@@ -2799,8 +2799,8 @@ window.JianghanCatalog = {
       '<div><h2>江汉平原的灯幕</h2><p>江汉平原皮影戏主要流传在潜江、天门、沔阳（今仙桃）一带。2006 年，湖北潜江申报的江汉平原皮影戏进入第一批国家级非遗名录。</p>'+
       sourceLink('listing')+'</div></section>'+
       '<section class="section"><div class="section-heading rule-heading"><h2>唱腔与工艺</h2></div><div class="explore-grid">'+
-      exploreCard('explore/stagecraft','heritage-backstage-performance.webp','从幕后到台前','听唱腔，看操偶')+
-      exploreCard('explore/process','heritage-puppet-craft.webp','影偶怎么做','潜江汤格皮影八道工序')+'</div></section>'+
+      exploreCard('explore/stagecraft','heritage-stagecraft-lamplight.webp','从幕后到台前','听唱腔，看操偶')+
+      exploreCard('explore/process','heritage-process-carving-lamplight.webp','影偶怎么做','潜江汤格皮影八道工序')+'</div></section>'+
       '<section class="section"><div class="section-heading rule-heading"><h2>影偶与影像</h2></div>'+
       photoCover()+filmLink()+row('stage/gallery','video','海报与影像','看原创海报和字影演示')+'</section></div>';
   }
@@ -2815,7 +2815,7 @@ window.JianghanCatalog = {
 
   function exploreProcess() {
     return '<article class="heritage-article">'+heading('影偶怎么做','潜江汤格皮影的八道传统工序')+
-      '<img class="heritage-banner process-banner" src="'+asset('heritage-puppet-craft.webp')+'" alt="艺人举起一件彩绘皮影" decoding="async">'+
+      '<img class="heritage-banner process-banner" src="'+asset('heritage-process-carving-lamplight.webp')+'" alt="暖光下用刻刀雕刻皮料的细节" decoding="async">'+
       '<div class="heritage-notes"><p class="process-lead">江汉平原皮影的雕镂有汤格、郭格等传承。这里以潜江传承人汤先成演示的汤格工艺为例。</p>'+
       '<ol class="process-list">'+data.heritage.process.map(([title,copy])=>'<li><div><strong>'+title+'</strong><p>'+copy+'</p></div></li>').join('')+'</ol>'+
       sourceLink('process')+'</div><div class="heritage-action">'+goButton('make','亲手制作一个字影 '+icon('next'),'primary-button')+'</div></article>';
@@ -2923,7 +2923,7 @@ window.JianghanCatalog = {
     return '<div class="craft-landing"><p class="craft-deck">体验五步工艺，亲手制作一件皮影</p>'+
       '<section class="craft-progress-card"><h2>制作进度</h2>'+Craft.progress(ongoing?.stage||'')+
       (ongoing?'<p class="craft-progress-note">'+ongoing.title+' · '+ongoing.step+'</p>':'')+'</section>'+
-      '<section class="craft-hero-card"><img class="craft-hero-photo" src="'+asset('craft-puppet-workshop.webp')+'" alt="艺人在工坊展示彩绘皮影" decoding="async">'+
+      '<section class="craft-hero-card"><img class="craft-hero-photo" src="'+asset('craft-maker-carving-portrait.webp')+'" alt="匠人在皮影工坊俯身雕刻皮料" decoding="async">'+
       '<div><h1>五步制影<br>亲手体验</h1><p>从一张皮开始，<br>雕刻、上色、装配，<br>再让字影登上灯幕。</p></div>'+
       Craft.waves+goButton(ongoing?.route||'make/choose',(ongoing?'继续制作':'开始制作')+' '+Craft.icon('next'),'craft-primary craft-start')+'</section>'+
       (ongoing?'<div class="craft-another">'+goButton('make/choose','换个字制作 '+Craft.icon('next'),'text-button')+'</div>':'')+
